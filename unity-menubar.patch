@@ -1,3 +1,7 @@
+# Unity-menubar patch
+# Date: Wed, 20 Jun 2024 11:48:06 +0200
+# Subject: [PATCH] Bug 1419151 - Firefox does not support global menu
+
 --- a/browser/base/content/browser-menubar.inc
 +++ b/browser/base/content/browser-menubar.inc
 @@ -7,7 +7,12 @@
