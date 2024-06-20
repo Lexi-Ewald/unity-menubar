@@ -7,7 +7,7 @@
 
 **Other Projects:**
 - [firefox-kde-opensuse](https://aur.archlinux.org/packages/firefox-kde-opensuse/)
-- [firefox-globalmenu.git](https://aur.archlinux.org/packages/firefox-globalmenu))
+- [firefox-globalmenu.git](https://aur.archlinux.org/packages/firefox-globalmenu)
 - [Waterfox project](https://github.com/MrAlex94/Waterfox/)
 - [Plasmafox Web-Browser](https://github.com/torvic9/plasmafox/)
   
