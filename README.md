@@ -1,5 +1,5 @@
 ## Unity Menubar
-### for Firefox with global menu
+### for Firefox and Thunderbird with global menu
 
 **Histroy**
 - Unity was developed by Mozilla and introduced in Ubuntu 11.04, which was released on May 12, 2011.
