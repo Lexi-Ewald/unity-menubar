@@ -17,4 +17,4 @@
 **Notes:**
 - Global menu on Unity seems to require `libdbusmenu-{qt5,gtk3}` and/or `appmenu-gtk-module` packages.
 - Unity-menubar.patch is tested for version 127.0.*
-- firefox and thunderbird is built on [launchpad](https://launchpad.net/~darkgrave/+archive/ubuntu/ffunity)
+- firefox and thunderbird is built on [launchpad.net](https://launchpad.net/~darkgrave/+archive/ubuntu/ffunity)
