@@ -1,26 +1,20 @@
-# Unity-menubar patch
-# Date: Wed, 20 Jun 2024 11:48:06 +0200
-# Subject: [PATCH] Bug 1419151 - Firefox does not support global menu
-
---- a/browser/base/content/browser-menubar.inc
-+++ b/browser/base/content/browser-menubar.inc
-@@ -7,7 +7,12 @@
- # On macOS, we don't track whether activation of the native menubar happened
- # with the keyboard.
- #ifndef XP_MACOSX
--                onpopupshowing="if (event.target.parentNode.parentNode == this)
-+                onpopupshowing="if (event.target.parentNode.parentNode == this &amp;&amp;
-+#ifdef MOZ_WIDGET_GTK
-+                                    document.documentElement.getAttribute('shellshowingmenubar') != 'true')
-+#else
-+                                    true)
-+#endif
-                                   this.setAttribute('openedwithkey',
-                                                     event.target.parentNode.openedWithKey);"
- #endif
+--- a/browser/base/content/browser-menubar.js
++++ b/browser/base/content/browser-menubar.js
+@@ -121,7 +121,10 @@
+       if (AppConstants.platform != "macosx") {
+         // We only set the "openedwithkey" if a specific menu like "Edit" was opened
+         // instead of the general menu bar. (e.g. Alt+E instead of just Alt)
+-        if (event.target.parentNode.parentNode == this) {
++        if (event.target.parentNode.parentNode == this && 
++          (AppConstants.MOZ_WIDGET_GTK  
++            ? document.documentElement.getAttribute("shellshowingmenubar") != "true" 
++            : true)) {
+           this.setAttribute(
+             "openedwithkey",
+             event.target.parentNode.openedWithKey
 --- a/browser/base/content/browser.js
 +++ b/browser/base/content/browser.js
-@@ -4814,11 +4814,18 @@ function onViewToolbarsPopupShowing(aEve
+@@ -4839,11 +4839,18 @@ function onViewToolbarsPopupShowing(aEve
    MozXULElement.insertFTLIfNeeded("browser/toolbarContextMenu.ftl");
    let firstMenuItem = aInsertPoint || popup.firstElementChild;
    let toolbarNodes = gNavToolbox.querySelectorAll("toolbar");
@@ -5037,7 +5031,7 @@
 +#endif /* __nsNativeMenuService_h__ */
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -7587,6 +7587,10 @@ void nsWindow::HideWindowChrome(bool aSh
+@@ -7624,6 +7624,10 @@ void nsWindow::HideWindowChrome(bool aSh
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -5059,7 +5053,7 @@
  #ifdef ACCESSIBILITY
  #  include "mozilla/a11y/LocalAccessible.h"
  #endif
-@@ -212,6 +214,8 @@ class nsWindow final : public nsBaseWidg
+@@ -211,6 +213,8 @@ class nsWindow final : public nsBaseWidg
    nsresult MakeFullScreen(bool aFullScreen) override;
    void HideWindowChrome(bool aShouldHide) override;
  
@@ -5068,7 +5062,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -937,6 +941,8 @@ class nsWindow final : public nsBaseWidg
+@@ -936,6 +940,8 @@ class nsWindow final : public nsBaseWidg
  
    static bool sTransparentMainWindow;
  
@@ -5099,7 +5093,7 @@
  
  # Static atom definitions, used to generate nsGkAtomList.h.
  #
-@@ -2572,7 +2573,7 @@ STATIC_ATOMS = [
+@@ -2574,7 +2575,7 @@ STATIC_ATOMS = [
      InheritingAnonBoxAtom("AnonBox_mozSVGForeignContent", ":-moz-svg-foreign-content"),
      InheritingAnonBoxAtom("AnonBox_mozSVGText", ":-moz-svg-text"),
      # END ATOMS
@@ -5199,7 +5193,7 @@
 +
  EXPORTS.mozilla += [
      "BasicEvents.h",
-     "ClipboardReadRequestChild.h",
+     "ClipboardContentAnalysisChild.h",
 --- /dev/null
 +++ b/widget/nsINativeMenuService.h
 @@ -0,0 +1,39 @@
