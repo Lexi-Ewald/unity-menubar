@@ -5,9 +5,9 @@
          // We only set the "openedwithkey" if a specific menu like "Edit" was opened
          // instead of the general menu bar. (e.g. Alt+E instead of just Alt)
 -        if (event.target.parentNode.parentNode == this) {
-+        if (event.target.parentNode.parentNode == this && 
-+          (AppConstants.MOZ_WIDGET_GTK  
-+            ? document.documentElement.getAttribute("shellshowingmenubar") != "true" 
++        if (event.target.parentNode.parentNode == this &&
++          (AppConstants.MOZ_WIDGET_GTK
++            ? document.documentElement.getAttribute("shellshowingmenubar") != "true"
 +            : true)) {
            this.setAttribute(
              "openedwithkey",
