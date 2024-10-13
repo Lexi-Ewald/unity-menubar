@@ -1,38 +1,24 @@
---- a/browser/base/content/browser-menubar.js
-+++ b/browser/base/content/browser-menubar.js
-@@ -121,7 +121,10 @@
-       if (AppConstants.platform != "macosx") {
-         // We only set the "openedwithkey" if a specific menu like "Edit" was opened
-         // instead of the general menu bar. (e.g. Alt+E instead of just Alt)
--        if (event.target.parentNode.parentNode == this) {
-+        if (event.target.parentNode.parentNode == this &&
-+          (AppConstants.MOZ_WIDGET_GTK
-+            ? document.documentElement.getAttribute("shellshowingmenubar") != "true"
-+            : true)) {
-           this.setAttribute(
-             "openedwithkey",
-             event.target.parentNode.openedWithKey
---- a/browser/base/content/browser.js
-+++ b/browser/base/content/browser.js
-@@ -4839,11 +4839,18 @@ function onViewToolbarsPopupShowing(aEve
-   MozXULElement.insertFTLIfNeeded("browser/toolbarContextMenu.ftl");
-   let firstMenuItem = aInsertPoint || popup.firstElementChild;
-   let toolbarNodes = gNavToolbox.querySelectorAll("toolbar");
-+
-+  let shellShowingMenubar = document.documentElement.getAttribute("shellshowingmenubar") == "true";
-+
-   for (let toolbar of toolbarNodes) {
-     if (!toolbar.hasAttribute("toolbarname")) {
-       continue;
-     }
+--- a/browser/components/customizableui/ToolbarContextMenu.sys.mjs
++++ b/browser/components/customizableui/ToolbarContextMenu.sys.mjs
+@@ -141,11 +141,18 @@
+       MozXULElement.insertFTLIfNeeded("browser/toolbarContextMenu.ftl");
+       let firstMenuItem = aInsertPoint || popup.firstElementChild;
+       let toolbarNodes = gNavToolbox.querySelectorAll("toolbar");
++      
++      let shellShowingMenubar = document.documentElement.getAttribute("shellshowingmenubar") == "true";
++      
+       for (let toolbar of toolbarNodes) {
+         if (!toolbar.hasAttribute("toolbarname")) {
+           continue;
+         }
  
-+    if (shellShowingMenubar && toolbar.id == "toolbar-menubar") {
-+      continue;
-+    }
++        if (shellShowingMenubar && toolbar.id == "toolbar-menubar") {
++          continue;
++        }
 +
-     if (toolbar.id == "PersonalToolbar") {
-       let menu = BookmarkingUI.buildBookmarksToolbarSubmenu(toolbar);
-       popup.insertBefore(menu, firstMenuItem);
+         if (toolbar.id == "PersonalToolbar") {
+           let menu = BookmarkingUI.buildBookmarksToolbarSubmenu(toolbar);
+           popup.insertBefore(menu, firstMenuItem);
 --- a/browser/components/places/content/places.xhtml
 +++ b/browser/components/places/content/places.xhtml
 @@ -188,6 +188,7 @@
@@ -123,7 +109,7 @@
  }
 --- a/widget/gtk/moz.build
 +++ b/widget/gtk/moz.build
-@@ -100,6 +100,15 @@ UNIFIED_SOURCES += [
+@@ -101,6 +101,15 @@ UNIFIED_SOURCES += [
  
  SOURCES += [
      "MediaKeysEventSourceFactory.cpp",
@@ -139,7 +125,7 @@
      "nsNativeThemeGTK.cpp",  # conflicts with X11 headers
      "nsWindow.cpp",  # conflicts with X11 headers
      "WaylandVsyncSource.cpp",  # conflicts with X11 headers
-@@ -148,6 +157,7 @@ LOCAL_INCLUDES += [
+@@ -150,6 +159,7 @@ LOCAL_INCLUDES += [
      "/layout/base",
      "/layout/forms",
      "/layout/generic",
@@ -3004,7 +2990,7 @@
 +#endif /* __nsMenuItem_h__ */
 --- /dev/null
 +++ b/widget/gtk/nsMenuObject.cpp
-@@ -0,0 +1,653 @@
+@@ -0,0 +1,654 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -3241,7 +3227,8 @@
 +                          nullptr, 0, loadGroup, this, nullptr, nullptr,
 +                          nsIRequest::LOAD_NORMAL, nullptr,
 +                          nsIContentPolicy::TYPE_IMAGE, EmptyString(),
-+                          /* aUseUrgentStartForChannel */ false, /* aLinkPreload */ false, 0, dom::FetchPriority::Auto, getter_AddRefs(mImageRequest));
++                          false, false, 0, dom::FetchPriority::Auto,
++                          getter_AddRefs(mImageRequest));
 +    }
 +}
 +
@@ -4424,7 +4411,7 @@
 +    static void RemoveUpdateBlocker();
 +
 +    nsCOMPtr<nsIContent> mRootNode;
-+    nsCOMPtr<mozilla::dom::Document> mDocument;
++    mozilla::dom::Document *mDocument;
 +    nsIContent *mLastSource;
 +    nsNativeMenuChangeObserver *mLastTarget;
 +    nsTArray<mozilla::UniquePtr<MutationRecord> > mPendingMutations;
@@ -5031,7 +5018,7 @@
 +#endif /* __nsNativeMenuService_h__ */
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -7624,6 +7624,10 @@ void nsWindow::HideWindowChrome(bool aSh
+@@ -7259,6 +7259,10 @@ void nsWindow::HideWindowChrome(bool aSh
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -5044,7 +5031,7 @@
    LOG("nsWindow::CheckForRollup() aAlwaysRollup %d", aAlwaysRollup);
 --- a/widget/gtk/nsWindow.h
 +++ b/widget/gtk/nsWindow.h
-@@ -29,6 +29,8 @@
+@@ -30,6 +30,8 @@
  #include "IMContextWrapper.h"
  #include "LookAndFeel.h"
  
@@ -5053,7 +5040,7 @@
  #ifdef ACCESSIBILITY
  #  include "mozilla/a11y/LocalAccessible.h"
  #endif
-@@ -211,6 +213,8 @@ class nsWindow final : public nsBaseWidg
+@@ -224,6 +226,8 @@ class nsWindow final : public nsBaseWidg
    nsresult MakeFullScreen(bool aFullScreen) override;
    void HideWindowChrome(bool aShouldHide) override;
  
@@ -5062,7 +5049,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -936,6 +940,8 @@ class nsWindow final : public nsBaseWidg
+@@ -932,6 +936,8 @@ class nsWindow final : public nsBaseWidg
  
    static bool sTransparentMainWindow;
  
@@ -5093,7 +5080,7 @@
  
  # Static atom definitions, used to generate nsGkAtomList.h.
  #
-@@ -2574,7 +2575,7 @@ STATIC_ATOMS = [
+@@ -2590,7 +2591,7 @@ STATIC_ATOMS = [
      InheritingAnonBoxAtom("AnonBox_mozSVGForeignContent", ":-moz-svg-foreign-content"),
      InheritingAnonBoxAtom("AnonBox_mozSVGText", ":-moz-svg-text"),
      # END ATOMS
@@ -5130,10 +5117,10 @@
  
  namespace mozilla::widget {
  
-@@ -25,6 +27,14 @@
-         DBusMenuBar::Create(aMenuBarElement));
-   }
- #endif
+@@ -17,6 +19,14 @@ void NativeMenuSupport::CreateNativeMenu
+                                             dom::Element* aMenuBarElement) {
+   MOZ_RELEASE_ASSERT(NS_IsMainThread(),
+                      "Attempting to create native menu bar on wrong thread!");
 +
 +  nsCOMPtr<nsINativeMenuService> nms =
 +      do_GetService("@mozilla.org/widget/nativemenuservice;1");
@@ -5142,10 +5129,9 @@
 +  }
 +
 +  nms->CreateNativeMenuBar(aParent, aMenuBarElement);
- }
  
- already_AddRefed<NativeMenu> NativeMenuSupport::CreateNativeContextMenu(
-
+ #ifdef MOZ_ENABLE_DBUS
+   if (aMenuBarElement && StaticPrefs::widget_gtk_global_menu_enabled() &&
 --- /dev/null
 +++ b/widget/gtk/NativeMenuSupport.h
 @@ -0,0 +1,31 @@
@@ -5182,7 +5168,7 @@
 +#endif  // mozilla_widget_NativeMenuSupport_h
 --- a/widget/moz.build
 +++ b/widget/moz.build
-@@ -165,6 +165,11 @@
+@@ -165,6 +165,11 @@ EXPORTS += [
      "PuppetWidget.h",
  ]
  
