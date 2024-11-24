@@ -1,48 +1,14 @@
---- a/browser/base/content/browser-menubar.js
-+++ b/browser/base/content/browser-menubar.js
-@@ -121,7 +121,10 @@
-       if (AppConstants.platform != "macosx") {
-         // We only set the "openedwithkey" if a specific menu like "Edit" was opened
-         // instead of the general menu bar. (e.g. Alt+E instead of just Alt)
--        if (event.target.parentNode.parentNode == this) {
-+        if (event.target.parentNode.parentNode == this &&
-+          (AppConstants.MOZ_WIDGET_GTK
-+            ? document.documentElement.getAttribute("shellshowingmenubar") != "true"
-+            : true)) {
-           this.setAttribute(
-             "openedwithkey",
-             event.target.parentNode.openedWithKey
---- a/browser/components/customizableui/ToolbarContextMenu.sys.mjs
-+++ b/browser/components/customizableui/ToolbarContextMenu.sys.mjs
-@@ -141,11 +141,18 @@ onViewToolbarsPopupShowing(aEve
-       MozXULElement.insertFTLIfNeeded("browser/toolbarContextMenu.ftl");
-       let firstMenuItem = aInsertPoint || popup.firstElementChild;
-       let toolbarNodes = gNavToolbox.querySelectorAll("toolbar");
-+
-+      let shellShowingMenubar = document.documentElement.getAttribute("shellshowingmenubar") == "true";
-+
-       for (let toolbar of toolbarNodes) {
-         if (!toolbar.hasAttribute("toolbarname")) {
-           continue;
-         }
- 
-+        if (shellShowingMenubar && toolbar.id == "toolbar-menubar") {
-+          continue;
-+        }
-+
-         if (toolbar.id == "PersonalToolbar") {
-           let menu = BookmarkingUI.buildBookmarksToolbarSubmenu(toolbar);
-           popup.insertBefore(menu, firstMenuItem);
 --- a/browser/components/places/content/places.xhtml
 +++ b/browser/components/places/content/places.xhtml
-@@ -188,6 +188,7 @@
+@@ -186,7 +186,7 @@
+               onpopupshowing="document.getElementById('placeContent').focus()"
+               data-l10n-id="places-organize-button-mac"
  #else
-       <menubar id="placesMenu">
+-      <menubar id="placesMenu">
++      <menubar id="placesMenu" _moz-menubarkeeplocal="true">
          <menu class="menu-iconic" data-l10n-id="places-organize-button"
-+              _moz-menubarkeeplocal="true"
  #endif
                id="organizeButton">
-           <menupopup id="organizeButtonPopup">
 --- a/dom/xul/XULPopupElement.cpp
 +++ b/dom/xul/XULPopupElement.cpp
 @@ -238,6 +238,10 @@ void XULPopupElement::GetState(nsString&
@@ -195,7 +161,7 @@
 +            return NS_ERROR_FAILURE; \
 +        } \
 +    } \
-+    for (uint32_t i = 0; i < mozilla::ArrayLength(k##symbol##Symbols); ++i) { \
++    for (uint32_t i = 0; i < std::size(k##symbol##Symbols); ++i) { \
 +        *k##symbol##Symbols[i].function = \
 +            PR_FindFunctionSymbol(g##symbol, k##symbol##Symbols[i].functionName); \
 +        if (!*k##symbol##Symbols[i].function) { \
@@ -2357,7 +2323,7 @@
 +
 +    uint32_t keyNameLength = keyName.Length();
 +    const char* keyNameStr = keyName.get();
-+    for (uint16_t i = 0; i < ArrayLength(gKeyCodes); ++i) {
++    for (uint16_t i = 0; i < std::size(gKeyCodes); ++i) {
 +        if (keyNameLength == gKeyCodes[i].strlength &&
 +            !nsCRT::strcmp(gKeyCodes[i].str, keyNameStr)) {
 +            keyCode = gKeyCodes[i].keycode;
@@ -2435,7 +2401,7 @@
 +    }
 +
 +    // misc other things
-+    for (uint32_t i = 0; i < ArrayLength(gKeyPairs); ++i) {
++    for (uint32_t i = 0; i < std::size(gKeyPairs); ++i) {
 +        if (gKeyPairs[i].DOMKeyCode == keyCode) {
 +            return gKeyPairs[i].GDKKeyval;
 +        }
@@ -5032,7 +4998,7 @@
 +#endif /* __nsNativeMenuService_h__ */
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -7263,6 +7263,10 @@ void nsWindow::HideWindowChrome(bool aSh
+@@ -7281,6 +7281,10 @@ void nsWindow::HideWindowChrome(bool aSh
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -5045,7 +5011,7 @@
    LOG("nsWindow::CheckForRollup() aAlwaysRollup %d", aAlwaysRollup);
 --- a/widget/gtk/nsWindow.h
 +++ b/widget/gtk/nsWindow.h
-@@ -30,6 +30,8 @@
+@@ -31,6 +31,8 @@
  #include "IMContextWrapper.h"
  #include "LookAndFeel.h"
  
@@ -5054,7 +5020,7 @@
  #ifdef ACCESSIBILITY
  #  include "mozilla/a11y/LocalAccessible.h"
  #endif
-@@ -224,6 +226,8 @@ class nsWindow final : public nsBaseWidg
+@@ -222,6 +224,8 @@ class nsWindow final : public nsBaseWidg
    nsresult MakeFullScreen(bool aFullScreen) override;
    void HideWindowChrome(bool aShouldHide) override;
  
@@ -5063,7 +5029,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -932,6 +936,8 @@ class nsWindow final : public nsBaseWidg
+@@ -944,6 +948,8 @@ class nsWindow final : public nsBaseWidg
  
    static bool sTransparentMainWindow;
  
@@ -5094,7 +5060,7 @@
  
  # Static atom definitions, used to generate nsGkAtomList.h.
  #
-@@ -2590,7 +2591,7 @@ STATIC_ATOMS = [
+@@ -2594,7 +2595,7 @@ STATIC_ATOMS = [
      InheritingAnonBoxAtom("AnonBox_mozSVGForeignContent", ":-moz-svg-foreign-content"),
      InheritingAnonBoxAtom("AnonBox_mozSVGText", ":-moz-svg-text"),
      # END ATOMS
@@ -5182,7 +5148,7 @@
 +#endif  // mozilla_widget_NativeMenuSupport_h
 --- a/widget/moz.build
 +++ b/widget/moz.build
-@@ -165,6 +165,11 @@ EXPORTS += [
+@@ -169,6 +169,11 @@ EXPORTS += [
      "PuppetWidget.h",
  ]
  
