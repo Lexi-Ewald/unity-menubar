@@ -73,7 +73,7 @@
  pref("browser.send_pings", false);
 --- a/toolkit/content/xul.css
 +++ b/toolkit/content/xul.css
-@@ -342,6 +342,13 @@ toolbox {
+@@ -319,6 +319,13 @@ toolbox {
    }
  }
  
@@ -3924,7 +3924,7 @@
 +#endif /* __nsMenuSeparator_h__ */
 --- /dev/null
 +++ b/widget/gtk/nsNativeMenuDocListener.cpp
-@@ -0,0 +1,347 @@
+@@ -0,0 +1,346 @@
 +/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 +/* vim:expandtab:shiftwidth=4:tabstop=4:
 + */
@@ -4044,8 +4044,7 @@
 +}
 +
 +void
-+nsNativeMenuDocListener::ContentRemoved(nsIContent *aChild,
-+                                        nsIContent *aPreviousSibling)
++nsNativeMenuDocListener::ContentWillBeRemoved(nsIContent* aChild)
 +{
 +    nsIContent* container = aChild->GetParent();
 +    if (!container) {
@@ -4998,7 +4997,7 @@
 +#endif /* __nsNativeMenuService_h__ */
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -7281,6 +7281,10 @@ void nsWindow::HideWindowChrome(bool aSh
+@@ -7243,6 +7243,10 @@ void nsWindow::HideWindowChrome(bool aSh
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -5020,7 +5019,7 @@
  #ifdef ACCESSIBILITY
  #  include "mozilla/a11y/LocalAccessible.h"
  #endif
-@@ -222,6 +224,8 @@ class nsWindow final : public nsBaseWidg
+@@ -225,6 +227,8 @@ class nsWindow final : public nsBaseWidg
    nsresult MakeFullScreen(bool aFullScreen) override;
    void HideWindowChrome(bool aShouldHide) override;
  
@@ -5029,7 +5028,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -944,6 +948,8 @@ class nsWindow final : public nsBaseWidg
+@@ -948,6 +952,8 @@ class nsWindow final : public nsBaseWidg
  
    static bool sTransparentMainWindow;
  
@@ -5060,7 +5059,7 @@
  
  # Static atom definitions, used to generate nsGkAtomList.h.
  #
-@@ -2594,7 +2595,7 @@ STATIC_ATOMS = [
+@@ -2595,7 +2596,7 @@ STATIC_ATOMS = [
      InheritingAnonBoxAtom("AnonBox_mozSVGForeignContent", ":-moz-svg-foreign-content"),
      InheritingAnonBoxAtom("AnonBox_mozSVGText", ":-moz-svg-text"),
      # END ATOMS
