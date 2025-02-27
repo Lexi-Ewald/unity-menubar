@@ -61,7 +61,7 @@
      "components.conf",
 --- a/modules/libpref/init/all.js
 +++ b/modules/libpref/init/all.js
-@@ -162,6 +162,9 @@ pref("dom.mouseevent.click.hack.use_lega
+@@ -161,6 +161,9 @@ pref("dom.mouseevent.click.hack.use_lega
  // Fastback caching - if this pref is negative, then we calculate the number
  // of content viewers to cache based on the amount of available memory.
  pref("browser.sessionhistory.max_total_viewers", -1);
@@ -89,7 +89,7 @@
  }
 --- a/widget/gtk/moz.build
 +++ b/widget/gtk/moz.build
-@@ -101,6 +101,15 @@ UNIFIED_SOURCES += [
+@@ -102,6 +102,15 @@ UNIFIED_SOURCES += [
  
  SOURCES += [
      "MediaKeysEventSourceFactory.cpp",
@@ -105,7 +105,7 @@
      "nsNativeThemeGTK.cpp",  # conflicts with X11 headers
      "nsWindow.cpp",  # conflicts with X11 headers
      "WaylandVsyncSource.cpp",  # conflicts with X11 headers
-@@ -150,6 +159,7 @@ LOCAL_INCLUDES += [
+@@ -153,6 +162,7 @@ LOCAL_INCLUDES += [
      "/layout/base",
      "/layout/forms",
      "/layout/generic",
@@ -4998,7 +4998,7 @@
 +#endif /* __nsNativeMenuService_h__ */
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -7243,6 +7243,10 @@ void nsWindow::HideWindowChrome(bool aSh
+@@ -7149,6 +7149,10 @@ void nsWindow::HideWindowChrome(bool aSh
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -5020,7 +5020,7 @@
  #ifdef ACCESSIBILITY
  #  include "mozilla/a11y/LocalAccessible.h"
  #endif
-@@ -225,6 +227,8 @@ class nsWindow final : public nsBaseWidg
+@@ -236,6 +238,8 @@ class nsWindow final : public nsBaseWidg
    nsresult MakeFullScreen(bool aFullScreen) override;
    void HideWindowChrome(bool aShouldHide) override;
  
@@ -5029,7 +5029,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -948,6 +952,8 @@ class nsWindow final : public nsBaseWidg
+@@ -952,6 +956,8 @@ class nsWindow final : public nsBaseWidg
  
    static bool sTransparentMainWindow;
  
@@ -5060,7 +5060,7 @@
  
  # Static atom definitions, used to generate nsGkAtomList.h.
  #
-@@ -2595,7 +2596,7 @@ STATIC_ATOMS = [
+@@ -2601,7 +2602,7 @@ STATIC_ATOMS = [
      InheritingAnonBoxAtom("AnonBox_mozSVGForeignContent", ":-moz-svg-foreign-content"),
      InheritingAnonBoxAtom("AnonBox_mozSVGText", ":-moz-svg-text"),
      # END ATOMS
@@ -5148,7 +5148,7 @@
 +#endif  // mozilla_widget_NativeMenuSupport_h
 --- a/widget/moz.build
 +++ b/widget/moz.build
-@@ -169,6 +169,11 @@ EXPORTS += [
+@@ -170,6 +170,11 @@ EXPORTS += [
      "PuppetWidget.h",
  ]
  
