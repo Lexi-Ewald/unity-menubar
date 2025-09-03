@@ -4012,22 +4012,22 @@
 +}
 +
 +void
-+nsNativeMenuDocListener::ContentAppended(nsIContent *aFirstNewContent)
-+{
-+    for (nsIContent *c = aFirstNewContent; c; c = c->GetNextSibling()) {
-+        ContentInserted(c);
++nsNativeMenuDocListener::ContentAppended(nsIContent* aFirstNewContent,
++                                        const ContentAppendInfo& aInfo) {
++    for (nsIContent* c = aFirstNewContent; c; c = c->GetNextSibling()) {
++        ContentInserted(c, aInfo);
 +    }
 +}
 +
 +void
-+nsNativeMenuDocListener::ContentInserted(nsIContent *aChild)
-+{
++nsNativeMenuDocListener::ContentInserted(nsIContent* aChild,
++                                        const ContentInsertInfo&) {
 +    nsIContent* container = aChild->GetParent();
 +    if (!container) {
 +      return;
 +    }
 +
-+    nsIContent *prevSibling = nsMenuContainer::GetPreviousSupportedSibling(aChild);
++    nsIContent* prevSibling = nsMenuContainer::GetPreviousSupportedSibling(aChild);
 +
 +    if (sUpdateBlockersCount == 0) {
 +        DoContentInserted(container, aChild, prevSibling);
@@ -4045,7 +4045,7 @@
 +
 +void
 +nsNativeMenuDocListener::ContentWillBeRemoved(nsIContent* aChild,
-+                                         const BatchRemovalState*) {
++                                         const ContentRemoveInfo&) {
 +    nsIContent* container = aChild->GetParent();
 +    if (!container) {
 +      return;
