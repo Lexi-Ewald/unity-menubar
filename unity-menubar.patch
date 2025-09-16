@@ -1,17 +1,17 @@
 --- a/browser/components/places/content/places.xhtml
 +++ b/browser/components/places/content/places.xhtml
-@@ -176,7 +176,7 @@
-         <toolbarbutton type="menu" class="tabbable" wantdropmarker="true"
-               data-l10n-id="places-organize-button-mac"
- #else
+@@ -172,7 +172,7 @@
+                      data-l10n-id="places-forward-button"
+                      disabled="true"/>
+ 
 -      <menubar id="placesMenu" nonnative="true">
 +      <menubar id="placesMenu" nonnative="true" _moz-menubarkeeplocal="true">
          <menu class="menu-iconic" data-l10n-id="places-organize-button"
- #endif
                id="organizeButton">
+           <menupopup id="organizeButtonPopup">
 --- a/dom/xul/XULPopupElement.cpp
 +++ b/dom/xul/XULPopupElement.cpp
-@@ -238,6 +238,10 @@ void XULPopupElement::GetState(nsString&
+@@ -239,6 +239,10 @@ void XULPopupElement::GetState(nsString&
    // set this here in case there's no frame for the popup
    aState.AssignLiteral("closed");
  
@@ -22,7 +22,7 @@
    if (nsXULPopupManager* pm = nsXULPopupManager::GetInstance()) {
      switch (pm->GetPopupState(this)) {
        case ePopupShown:
-@@ -260,6 +264,11 @@ void XULPopupElement::GetState(nsString&
+@@ -261,6 +265,11 @@ void XULPopupElement::GetState(nsString&
          break;
      }
    }
@@ -73,7 +73,7 @@
  pref("browser.send_pings", false);
 --- a/toolkit/content/xul.css
 +++ b/toolkit/content/xul.css
-@@ -328,6 +328,13 @@ toolbox {
+@@ -326,6 +326,13 @@ toolbox {
    }
  }
  
@@ -89,7 +89,7 @@
  }
 --- a/widget/gtk/moz.build
 +++ b/widget/gtk/moz.build
-@@ -106,6 +106,15 @@ UNIFIED_SOURCES += [
+@@ -107,6 +107,15 @@ UNIFIED_SOURCES += [
  
  SOURCES += [
      "MediaKeysEventSourceFactory.cpp",
@@ -105,7 +105,7 @@
      "nsNativeThemeGTK.cpp",  # conflicts with X11 headers
      "nsWindow.cpp",  # conflicts with X11 headers
      "WaylandVsyncSource.cpp",  # conflicts with X11 headers
-@@ -157,6 +166,7 @@ LOCAL_INCLUDES += [
+@@ -158,6 +167,7 @@ LOCAL_INCLUDES += [
      "/layout/base",
      "/layout/forms",
      "/layout/generic",
@@ -133,13 +133,13 @@
 +DBUSMENU_GTK_FUNCTIONS
 +#undef FUNC
 +
-+static PRLibrary *gDbusmenuGlib = nullptr;
-+static PRLibrary *gDbusmenuGtk = nullptr;
++static PRLibrary* gDbusmenuGlib = nullptr;
++static PRLibrary* gDbusmenuGtk = nullptr;
 +
 +typedef void (*nsDbusmenuFunc)();
 +struct nsDbusmenuDynamicFunction {
-+    const char *functionName;
-+    nsDbusmenuFunc *function;
++    const char* functionName;
++    nsDbusmenuFunc* function;
 +};
 +
 +/* static */ nsresult
@@ -196,26 +196,26 @@
 +#include <gdk/gdk.h>
 +
 +#define DBUSMENU_GLIB_FUNCTIONS \
-+    FUNC(dbusmenu_menuitem_child_add_position, gboolean, (DbusmenuMenuitem *mi, DbusmenuMenuitem *child, guint position)) \
-+    FUNC(dbusmenu_menuitem_child_append, gboolean, (DbusmenuMenuitem *mi, DbusmenuMenuitem *child)) \
-+    FUNC(dbusmenu_menuitem_child_delete, gboolean, (DbusmenuMenuitem *mi, DbusmenuMenuitem *child)) \
-+    FUNC(dbusmenu_menuitem_get_children, GList*, (DbusmenuMenuitem *mi)) \
++    FUNC(dbusmenu_menuitem_child_add_position, gboolean, (DbusmenuMenuitem * mi, DbusmenuMenuitem * child, guint position)) \
++    FUNC(dbusmenu_menuitem_child_append, gboolean, (DbusmenuMenuitem * mi, DbusmenuMenuitem * child)) \
++    FUNC(dbusmenu_menuitem_child_delete, gboolean, (DbusmenuMenuitem * mi, DbusmenuMenuitem * child)) \
++    FUNC(dbusmenu_menuitem_get_children, GList*, (DbusmenuMenuitem * mi)) \
 +    FUNC(dbusmenu_menuitem_new, DbusmenuMenuitem*, (void)) \
-+    FUNC(dbusmenu_menuitem_property_get, const gchar*, (DbusmenuMenuitem *mi, const gchar *property)) \
-+    FUNC(dbusmenu_menuitem_property_get_bool, gboolean, (DbusmenuMenuitem *mi, const gchar *property)) \
-+    FUNC(dbusmenu_menuitem_property_remove, void, (DbusmenuMenuitem *mi, const gchar *property)) \
-+    FUNC(dbusmenu_menuitem_property_set, gboolean, (DbusmenuMenuitem *mi, const gchar *property, const gchar *value)) \
-+    FUNC(dbusmenu_menuitem_property_set_bool, gboolean, (DbusmenuMenuitem *mi, const gchar *property, const gboolean value)) \
-+    FUNC(dbusmenu_menuitem_property_set_int, gboolean, (DbusmenuMenuitem *mi, const gchar *property, const gint value)) \
-+    FUNC(dbusmenu_menuitem_show_to_user, void, (DbusmenuMenuitem *mi, guint timestamp)) \
-+    FUNC(dbusmenu_menuitem_take_children, GList*, (DbusmenuMenuitem *mi)) \
-+    FUNC(dbusmenu_server_new, DbusmenuServer*, (const gchar *object)) \
-+    FUNC(dbusmenu_server_set_root, void, (DbusmenuServer *server, DbusmenuMenuitem *root)) \
-+    FUNC(dbusmenu_server_set_status, void, (DbusmenuServer *server, DbusmenuStatus status))
++    FUNC(dbusmenu_menuitem_property_get, const gchar*, (DbusmenuMenuitem * mi, const gchar* property)) \
++    FUNC(dbusmenu_menuitem_property_get_bool, gboolean, (DbusmenuMenuitem * mi, const gchar* property)) \
++    FUNC(dbusmenu_menuitem_property_remove, void, (DbusmenuMenuitem * mi, const gchar* property)) \
++    FUNC(dbusmenu_menuitem_property_set, gboolean, (DbusmenuMenuitem * mi, const gchar* property, const gchar* value)) \
++    FUNC(dbusmenu_menuitem_property_set_bool, gboolean, (DbusmenuMenuitem * mi, const gchar* property, const gboolean value)) \
++    FUNC(dbusmenu_menuitem_property_set_int, gboolean, (DbusmenuMenuitem * mi, const gchar* property, const gint value)) \
++    FUNC(dbusmenu_menuitem_show_to_user, void, (DbusmenuMenuitem * mi, guint timestamp)) \
++    FUNC(dbusmenu_menuitem_take_children, GList*, (DbusmenuMenuitem * mi)) \
++    FUNC(dbusmenu_server_new, DbusmenuServer*, (const gchar* object)) \
++    FUNC(dbusmenu_server_set_root, void, (DbusmenuServer* server, DbusmenuMenuitem* root)) \
++    FUNC(dbusmenu_server_set_status, void, (DbusmenuServer* server, DbusmenuStatus status))
 +
 +#define DBUSMENU_GTK_FUNCTIONS \
-+    FUNC(dbusmenu_menuitem_property_set_image, gboolean, (DbusmenuMenuitem *menuitem, const gchar *property, const GdkPixbuf *data)) \
-+    FUNC(dbusmenu_menuitem_property_set_shortcut, gboolean, (DbusmenuMenuitem *menuitem, guint key, GdkModifierType modifier))
++    FUNC(dbusmenu_menuitem_property_set_image, gboolean, (DbusmenuMenuitem* menuitem, const gchar* property, const GdkPixbuf* data)) \
++    FUNC(dbusmenu_menuitem_property_set_shortcut, gboolean, (DbusmenuMenuitem* menuitem, guint key, GdkModifierType modifier))
 +
 +typedef struct _DbusmenuMenuitem DbusmenuMenuitem;
 +typedef struct _DbusmenuServer DbusmenuServer;
@@ -325,10 +325,10 @@
 +class nsMenuContentInsertedEvent : public Runnable
 +{
 +public:
-+    nsMenuContentInsertedEvent(nsMenu *aMenu,
-+                               nsIContent *aContainer,
-+                               nsIContent *aChild,
-+                               nsIContent *aPrevSibling) :
++    nsMenuContentInsertedEvent(nsMenu* aMenu,
++                               nsIContent* aContainer,
++                               nsIContent* aChild,
++                               nsIContent* aPrevSibling) :
 +        Runnable("nsMenuContentInsertedEvent"),
 +        mWeakMenu(aMenu),
 +        mContainer(aContainer),
@@ -341,7 +341,7 @@
 +            return NS_OK;
 +        }
 +
-+        static_cast<nsMenu *>(mWeakMenu.get())->HandleContentInserted(mContainer,
++        static_cast<nsMenu*>(mWeakMenu.get())->HandleContentInserted(mContainer,
 +                                                                      mChild,
 +                                                                      mPrevSibling);
 +        return NS_OK;
@@ -358,9 +358,9 @@
 +class nsMenuContentRemovedEvent : public Runnable
 +{
 +public:
-+    nsMenuContentRemovedEvent(nsMenu *aMenu,
-+                              nsIContent *aContainer,
-+                              nsIContent *aChild) :
++    nsMenuContentRemovedEvent(nsMenu* aMenu,
++                              nsIContent* aContainer,
++                              nsIContent* aChild) :
 +        Runnable("nsMenuContentRemovedEvent"),
 +        mWeakMenu(aMenu),
 +        mContainer(aContainer),
@@ -372,7 +372,7 @@
 +            return NS_OK;
 +        }
 +
-+        static_cast<nsMenu *>(mWeakMenu.get())->HandleContentRemoved(mContainer,
++        static_cast<nsMenu*>(mWeakMenu.get())->HandleContentRemoved(mContainer,
 +                                                                     mChild);
 +        return NS_OK;
 +    }
@@ -385,7 +385,7 @@
 +};
 +
 +static void
-+DispatchMouseEvent(nsIContent *aTarget, mozilla::EventMessage aMsg)
++DispatchMouseEvent(nsIContent* aTarget, mozilla::EventMessage aMsg)
 +{
 +    if (!aTarget) {
 +        return;
@@ -431,9 +431,9 @@
 +}
 +
 +/* static */ void
-+nsMenu::DoOpenCallback(nsITimer *aTimer, void *aClosure)
++nsMenu::DoOpenCallback(nsITimer* aTimer, void* aClosure)
 +{
-+    nsMenu* self = static_cast<nsMenu *>(aClosure);
++    nsMenu* self = static_cast<nsMenu*>(aClosure);
 +
 +    dbusmenu_menuitem_show_to_user(self->GetNativeData(), 0);
 +
@@ -441,13 +441,13 @@
 +}
 +
 +/* static */ void
-+nsMenu::menu_event_cb(DbusmenuMenuitem *menu,
-+                      const gchar *name,
-+                      GVariant *value,
++nsMenu::menu_event_cb(DbusmenuMenuitem* menu,
++                      const gchar* name,
++                      GVariant* value,
 +                      guint timestamp,
 +                      gpointer user_data)
 +{
-+    nsMenu *self = static_cast<nsMenu *>(user_data);
++    nsMenu* self = static_cast<nsMenu*>(user_data);
 +
 +    nsAutoCString event(name);
 +
@@ -468,7 +468,7 @@
 +    MOZ_ASSERT(!IsInBatchedUpdate(),
 +               "Shouldn't be modifying the native menu structure now");
 +
-+    GList *children = dbusmenu_menuitem_get_children(GetNativeData());
++    GList* children = dbusmenu_menuitem_get_children(GetNativeData());
 +    if (!children) {
 +        MOZ_ASSERT(!mPlaceholderItem);
 +
@@ -561,7 +561,7 @@
 +
 +    uint32_t count = mPopupContent->GetChildCount();
 +    for (uint32_t i = 0; i < count; ++i) {
-+        nsIContent *childContent = mPopupContent->GetChildAt_Deprecated(i);
++        nsIContent* childContent = mPopupContent->GetChildAt_Deprecated(i);
 +
 +        UniquePtr<nsMenuObject> child = CreateChild(childContent);
 +
@@ -580,7 +580,7 @@
 +    oldPopupContent.swap(mPopupContent);
 +
 +    for (uint32_t i = 0; i < ContentNode()->GetChildCount(); ++i) {
-+        nsIContent *child = ContentNode()->GetChildAt_Deprecated(i);
++        nsIContent* child = ContentNode()->GetChildAt_Deprecated(i);
 +
 +        if (child->NodeInfo()->NameAtom() == nsGkAtoms::menupopup) {
 +            mPopupContent = child;
@@ -622,7 +622,7 @@
 +}
 +
 +void
-+nsMenu::RemoveChild(nsIContent *aChild)
++nsMenu::RemoveChild(nsIContent* aChild)
 +{
 +    size_t index = IndexOf(aChild);
 +    if (index == NoIndex) {
@@ -634,7 +634,7 @@
 +
 +void
 +nsMenu::InsertChildAfter(UniquePtr<nsMenuObject> aChild,
-+                         nsIContent *aPrevSibling)
++                         nsIContent* aPrevSibling)
 +{
 +    if (!IsInBatchedUpdate()) {
 +        EnsureNoPlaceholderItem();
@@ -686,9 +686,9 @@
 +}
 +
 +void
-+nsMenu::HandleContentInserted(nsIContent *aContainer,
-+                              nsIContent *aChild,
-+                              nsIContent *aPrevSibling)
++nsMenu::HandleContentInserted(nsIContent* aContainer,
++                              nsIContent* aChild,
++                              nsIContent* aPrevSibling)
 +{
 +    if (aContainer == mPopupContent) {
 +        UniquePtr<nsMenuObject> child = CreateChild(aChild);
@@ -702,7 +702,7 @@
 +}
 +
 +void
-+nsMenu::HandleContentRemoved(nsIContent *aContainer, nsIContent *aChild)
++nsMenu::HandleContentRemoved(nsIContent* aContainer, nsIContent* aChild)
 +{
 +    if (aContainer == mPopupContent) {
 +        RemoveChild(aChild);
@@ -731,7 +731,7 @@
 +}
 +
 +void
-+nsMenu::Update(const ComputedStyle *aComputedStyle)
++nsMenu::Update(const ComputedStyle* aComputedStyle)
 +{
 +    if (mNeedsUpdate) {
 +        mNeedsUpdate = false;
@@ -757,7 +757,7 @@
 +}
 +
 +void
-+nsMenu::OnAttributeChanged(nsIContent *aContent, nsAtom *aAttribute)
++nsMenu::OnAttributeChanged(nsIContent* aContent, nsAtom* aAttribute)
 +{
 +    MOZ_ASSERT(aContent == ContentNode() || aContent == mPopupContent,
 +               "Received an event that wasn't meant for us!");
@@ -792,8 +792,8 @@
 +}
 +
 +void
-+nsMenu::OnContentInserted(nsIContent *aContainer, nsIContent *aChild,
-+                          nsIContent *aPrevSibling)
++nsMenu::OnContentInserted(nsIContent* aContainer, nsIContent* aChild,
++                          nsIContent* aPrevSibling)
 +{
 +    MOZ_ASSERT(aContainer == ContentNode() || aContainer == mPopupContent,
 +               "Received an event that wasn't meant for us!");
@@ -813,7 +813,7 @@
 +}
 +
 +void
-+nsMenu::OnContentRemoved(nsIContent *aContainer, nsIContent *aChild)
++nsMenu::OnContentRemoved(nsIContent* aContainer, nsIContent* aChild)
 +{
 +    MOZ_ASSERT(aContainer == ContentNode() || aContainer == mPopupContent,
 +               "Received an event that wasn't meant for us!");
@@ -845,7 +845,7 @@
 + */
 +
 +void
-+nsMenu::OnBeginUpdates(nsIContent *aContent)
++nsMenu::OnBeginUpdates(nsIContent* aContent)
 +{
 +    MOZ_ASSERT(aContent == ContentNode() || aContent == mPopupContent,
 +               "Received an event that wasn't meant for us!");
@@ -875,8 +875,8 @@
 +
 +    EnsureNoPlaceholderItem();
 +
-+    GList *nextNativeChild = dbusmenu_menuitem_get_children(GetNativeData());
-+    DbusmenuMenuitem *nextOwnedNativeChild = nullptr;
++    GList* nextNativeChild = dbusmenu_menuitem_get_children(GetNativeData());
++    DbusmenuMenuitem* nextOwnedNativeChild = nullptr;
 +
 +    size_t count = ChildCount();
 +
@@ -891,7 +891,7 @@
 +
 +    // Now iterate over all Gecko menuitems
 +    for (size_t i = 0; i < count; ++i) {
-+        nsMenuObject *child = ChildAt(i);
++        nsMenuObject* child = ChildAt(i);
 +
 +        if (child->GetNativeData()) {
 +            // This child already has a corresponding native menuitem.
@@ -900,8 +900,8 @@
 +            while (nextNativeChild &&
 +                   nextNativeChild->data != nextOwnedNativeChild) {
 +
-+                DbusmenuMenuitem *data =
-+                    static_cast<DbusmenuMenuitem *>(nextNativeChild->data);
++                DbusmenuMenuitem* data =
++                    static_cast<DbusmenuMenuitem*>(nextNativeChild->data);
 +                nextNativeChild = nextNativeChild->next;
 +
 +                MOZ_ALWAYS_TRUE(dbusmenu_menuitem_child_delete(GetNativeData(),
@@ -925,8 +925,8 @@
 +            if (nextNativeChild &&
 +                nextNativeChild->data != nextOwnedNativeChild) {
 +
-+                DbusmenuMenuitem *data =
-+                    static_cast<DbusmenuMenuitem *>(nextNativeChild->data);
++                DbusmenuMenuitem* data =
++                    static_cast<DbusmenuMenuitem*>(nextNativeChild->data);
 +
 +                if (NS_SUCCEEDED(child->AdoptNativeData(data))) {
 +                    nextNativeChild = nextNativeChild->next;
@@ -946,8 +946,8 @@
 +    }
 +
 +    while (nextNativeChild) {
-+        DbusmenuMenuitem *data =
-+            static_cast<DbusmenuMenuitem *>(nextNativeChild->data);
++        DbusmenuMenuitem* data =
++            static_cast<DbusmenuMenuitem*>(nextNativeChild->data);
 +        nextNativeChild = nextNativeChild->next;
 +
 +        MOZ_ALWAYS_TRUE(dbusmenu_menuitem_child_delete(GetNativeData(), data));
@@ -956,7 +956,7 @@
 +    MaybeAddPlaceholderItem();
 +}
 +
-+nsMenu::nsMenu(nsMenuContainer *aParent, nsIContent *aContent) :
++nsMenu::nsMenu(nsMenuContainer* aParent, nsIContent* aContent) :
 +    nsMenuContainer(aParent, aContent),
 +    mNeedsRebuild(false),
 +    mNeedsUpdate(false),
@@ -1068,7 +1068,7 @@
 +    size_t count = ChildCount();
 +    for (size_t i = 0; i < count; ++i) {
 +        if (ChildAt(i)->Type() == nsMenuObject::eType_Menu) {
-+            static_cast<nsMenu *>(ChildAt(i))->OnClose();
++            static_cast<nsMenu*>(ChildAt(i))->OnClose();
 +        }
 +    }
 +
@@ -1113,7 +1113,7 @@
 +class nsMenu final : public nsMenuContainer
 +{
 +public:
-+    nsMenu(nsMenuContainer *aParent, nsIContent *aContent);
++    nsMenu(nsMenuContainer* aParent, nsIContent* aContent);
 +    ~nsMenu();
 +
 +    nsMenuObject::EType Type() const override;
@@ -1141,10 +1141,10 @@
 +
 +    void SetPopupState(EPopupState aState);
 +
-+    static void DoOpenCallback(nsITimer *aTimer, void *aClosure);
-+    static void menu_event_cb(DbusmenuMenuitem *menu,
-+                              const gchar *name,
-+                              GVariant *value,
++    static void DoOpenCallback(nsITimer* aTimer, void* aClosure);
++    static void menu_event_cb(DbusmenuMenuitem* menu,
++                              const gchar* name,
++                              GVariant* value,
 +                              guint timestamp,
 +                              gpointer user_data);
 +
@@ -1159,35 +1159,35 @@
 +    void Build();
 +    void InitializePopup();
 +    void RemoveChildAt(size_t aIndex);
-+    void RemoveChild(nsIContent *aChild);
++    void RemoveChild(nsIContent* aChild);
 +    void InsertChildAfter(mozilla::UniquePtr<nsMenuObject> aChild,
-+                          nsIContent *aPrevSibling);
++                          nsIContent* aPrevSibling);
 +    void AppendChild(mozilla::UniquePtr<nsMenuObject> aChild);
 +    bool IsInBatchedUpdate() const;
 +    void StructureMutated();
 +    bool CanOpen() const;
 +
-+    void HandleContentInserted(nsIContent *aContainer,
-+                               nsIContent *aChild,
-+                               nsIContent *aPrevSibling);
-+    void HandleContentRemoved(nsIContent *aContainer,
-+                              nsIContent *aChild);
++    void HandleContentInserted(nsIContent* aContainer,
++                               nsIContent* aChild,
++                               nsIContent* aPrevSibling);
++    void HandleContentRemoved(nsIContent* aContainer,
++                              nsIContent* aChild);
 +
 +    void InitializeNativeData() override;
-+    void Update(const mozilla::ComputedStyle *aComputedStyle) override;
++    void Update(const mozilla::ComputedStyle* aComputedStyle) override;
 +    nsMenuObject::PropertyFlags SupportedProperties() const override;
 +
-+    void OnAttributeChanged(nsIContent *aContent, nsAtom *aAttribute) override;
-+    void OnContentInserted(nsIContent *aContainer, nsIContent *aChild,
-+                           nsIContent *aPrevSibling) override;
-+    void OnContentRemoved(nsIContent *aContainer, nsIContent *aChild) override;
-+    void OnBeginUpdates(nsIContent *aContent) override;
++    void OnAttributeChanged(nsIContent* aContent, nsAtom* aAttribute) override;
++    void OnContentInserted(nsIContent* aContainer, nsIContent* aChild,
++                           nsIContent* aPrevSibling) override;
++    void OnContentRemoved(nsIContent* aContainer, nsIContent* aChild) override;
++    void OnBeginUpdates(nsIContent* aContent) override;
 +    void OnEndUpdates() override;
 +
 +    bool mNeedsRebuild;
 +    bool mNeedsUpdate;
 +
-+    DbusmenuMenuitem *mPlaceholderItem;
++    DbusmenuMenuitem* mPlaceholderItem;
 +
 +    EPopupState mPopupState;
 +
@@ -1243,7 +1243,7 @@
 +using namespace mozilla;
 +
 +static bool
-+ShouldHandleKeyEvent(dom::KeyboardEvent *aEvent)
++ShouldHandleKeyEvent(dom::KeyboardEvent* aEvent)
 +{
 +    return !aEvent->DefaultPrevented() && aEvent->IsTrusted();
 +}
@@ -1251,9 +1251,9 @@
 +class nsMenuBarContentInsertedEvent : public Runnable
 +{
 +public:
-+    nsMenuBarContentInsertedEvent(nsMenuBar *aMenuBar,
-+                                  nsIContent *aChild,
-+                                  nsIContent *aPrevSibling) :
++    nsMenuBarContentInsertedEvent(nsMenuBar* aMenuBar,
++                                  nsIContent* aChild,
++                                  nsIContent* aPrevSibling) :
 +        Runnable("nsMenuBarContentInsertedEvent"),
 +        mWeakMenuBar(aMenuBar),
 +        mChild(aChild),
@@ -1265,7 +1265,7 @@
 +            return NS_OK;
 +        }
 +
-+        static_cast<nsMenuBar *>(mWeakMenuBar.get())->HandleContentInserted(mChild,
++        static_cast<nsMenuBar*>(mWeakMenuBar.get())->HandleContentInserted(mChild,
 +                                                                            mPrevSibling);
 +        return NS_OK;
 +    }
@@ -1280,8 +1280,8 @@
 +class nsMenuBarContentRemovedEvent : public Runnable
 +{
 +public:
-+    nsMenuBarContentRemovedEvent(nsMenuBar *aMenuBar,
-+                                 nsIContent *aChild) :
++    nsMenuBarContentRemovedEvent(nsMenuBar* aMenuBar,
++                                 nsIContent* aChild) :
 +        Runnable("nsMenuBarContentRemovedEvent"),
 +        mWeakMenuBar(aMenuBar),
 +        mChild(aChild) { }
@@ -1292,7 +1292,7 @@
 +            return NS_OK;
 +        }
 +
-+        static_cast<nsMenuBar *>(mWeakMenuBar.get())->HandleContentRemoved(mChild);
++        static_cast<nsMenuBar*>(mWeakMenuBar.get())->HandleContentRemoved(mChild);
 +        return NS_OK;
 +    }
 +
@@ -1308,18 +1308,18 @@
 +    NS_DECL_ISUPPORTS
 +    NS_DECL_NSIDOMEVENTLISTENER
 +
-+    DocEventListener(nsMenuBar *aOwner) : mOwner(aOwner) { };
++    DocEventListener(nsMenuBar* aOwner) : mOwner(aOwner) { };
 +
 +private:
 +    ~DocEventListener() { };
 +
-+    nsMenuBar *mOwner;
++    nsMenuBar* mOwner;
 +};
 +
 +NS_IMPL_ISUPPORTS(nsMenuBar::DocEventListener, nsIDOMEventListener)
 +
 +NS_IMETHODIMP
-+nsMenuBar::DocEventListener::HandleEvent(dom::Event *aEvent)
++nsMenuBar::DocEventListener::HandleEvent(dom::Event* aEvent)
 +{
 +    nsAutoString type;
 +    aEvent->GetType(type);
@@ -1346,7 +1346,7 @@
 +    return NS_OK;
 +}
 +
-+nsMenuBar::nsMenuBar(nsIContent *aMenuBarNode) :
++nsMenuBar::nsMenuBar(nsIContent* aMenuBarNode) :
 +    nsMenuContainer(new nsNativeMenuDocListener(aMenuBarNode), aMenuBarNode),
 +    mTopLevel(nullptr),
 +    mServer(nullptr),
@@ -1356,11 +1356,11 @@
 +}
 +
 +nsresult
-+nsMenuBar::Init(nsIWidget *aParent)
++nsMenuBar::Init(nsIWidget* aParent)
 +{
 +    MOZ_ASSERT(aParent);
 +
-+    GdkWindow *gdkWin = static_cast<GdkWindow *>(
++    GdkWindow* gdkWin = static_cast<GdkWindow*>(
 +        aParent->GetNativeData(NS_NATIVE_WINDOW));
 +    if (!gdkWin) {
 +        return NS_ERROR_FAILURE;
@@ -1423,7 +1423,7 @@
 +{
 +    uint32_t count = ContentNode()->GetChildCount();
 +    for (uint32_t i = 0; i < count; ++i) {
-+        nsIContent *childContent = ContentNode()->GetChildAt_Deprecated(i);
++        nsIContent* childContent = ContentNode()->GetChildAt_Deprecated(i);
 +
 +        UniquePtr<nsMenuObject> child = CreateChild(childContent);
 +
@@ -1482,7 +1482,7 @@
 +}
 +
 +nsMenuBar::ModifierFlags
-+nsMenuBar::GetModifiersFromEvent(dom::KeyboardEvent *aEvent)
++nsMenuBar::GetModifiersFromEvent(dom::KeyboardEvent* aEvent)
 +{
 +    ModifierFlags modifiers = static_cast<ModifierFlags>(0);
 +
@@ -1506,7 +1506,7 @@
 +}
 +
 +nsresult
-+nsMenuBar::Keypress(dom::KeyboardEvent *aEvent)
++nsMenuBar::Keypress(dom::KeyboardEvent* aEvent)
 +{
 +    if (!ShouldHandleKeyEvent(aEvent)) {
 +        return NS_OK;
@@ -1527,14 +1527,14 @@
 +    char16_t chl = ToLowerCase(ch);
 +    char16_t chu = ToUpperCase(ch);
 +
-+    nsMenuObject *found = nullptr;
++    nsMenuObject* found = nullptr;
 +    uint32_t count = ChildCount();
 +    for (uint32_t i = 0; i < count; ++i) {
 +        nsAutoString accesskey;
 +        ChildAt(i)->ContentNode()->AsElement()->GetAttr(kNameSpaceID_None,
 +                                                        nsGkAtoms::accesskey,
 +                                                        accesskey);
-+        const nsAutoString::char_type *key = accesskey.BeginReading();
++        const nsAutoString::char_type* key = accesskey.BeginReading();
 +        if (*key == chu || *key == chl) {
 +            found = ChildAt(i);
 +            break;
@@ -1548,7 +1548,7 @@
 +    ContentNode()->AsElement()->SetAttr(kNameSpaceID_None,
 +                                        nsGkAtoms::openedwithkey,
 +                                        u"true"_ns, true);
-+    static_cast<nsMenu *>(found)->OpenMenu();
++    static_cast<nsMenu*>(found)->OpenMenu();
 +
 +    aEvent->StopPropagation();
 +    aEvent->PreventDefault();
@@ -1557,7 +1557,7 @@
 +}
 +
 +nsresult
-+nsMenuBar::KeyDown(dom::KeyboardEvent *aEvent)
++nsMenuBar::KeyDown(dom::KeyboardEvent* aEvent)
 +{
 +    if (!ShouldHandleKeyEvent(aEvent)) {
 +        return NS_OK;
@@ -1575,7 +1575,7 @@
 +}
 +
 +nsresult
-+nsMenuBar::KeyUp(dom::KeyboardEvent *aEvent)
++nsMenuBar::KeyUp(dom::KeyboardEvent* aEvent)
 +{
 +    if (!ShouldHandleKeyEvent(aEvent)) {
 +        return NS_OK;
@@ -1590,7 +1590,7 @@
 +}
 +
 +void
-+nsMenuBar::HandleContentInserted(nsIContent *aChild, nsIContent *aPrevSibling)
++nsMenuBar::HandleContentInserted(nsIContent* aChild, nsIContent* aPrevSibling)
 +{
 +    UniquePtr<nsMenuObject> child = CreateChild(aChild);
 +
@@ -1602,14 +1602,14 @@
 +}
 +
 +void
-+nsMenuBar::HandleContentRemoved(nsIContent *aChild)
++nsMenuBar::HandleContentRemoved(nsIContent* aChild)
 +{
 +    RemoveChild(aChild);
 +}
 +
 +void
-+nsMenuBar::OnContentInserted(nsIContent *aContainer, nsIContent *aChild,
-+                             nsIContent *aPrevSibling)
++nsMenuBar::OnContentInserted(nsIContent* aContainer, nsIContent* aChild,
++                             nsIContent* aPrevSibling)
 +{
 +    MOZ_ASSERT(aContainer == ContentNode(),
 +               "Received an event that wasn't meant for us");
@@ -1619,7 +1619,7 @@
 +}
 +
 +void
-+nsMenuBar::OnContentRemoved(nsIContent *aContainer, nsIContent *aChild)
++nsMenuBar::OnContentRemoved(nsIContent* aContainer, nsIContent* aChild)
 +{
 +    MOZ_ASSERT(aContainer == ContentNode(),
 +               "Received an event that wasn't meant for us");
@@ -1630,7 +1630,7 @@
 +
 +nsMenuBar::~nsMenuBar()
 +{
-+    nsNativeMenuService *service = nsNativeMenuService::GetSingleton();
++    nsNativeMenuService* service = nsNativeMenuService::GetSingleton();
 +    if (service) {
 +        service->NotifyNativeMenuBarDestroyed(this);
 +    }
@@ -1665,7 +1665,7 @@
 +}
 +
 +/* static */ UniquePtr<nsMenuBar>
-+nsMenuBar::Create(nsIWidget *aParent, nsIContent *aMenuBarNode)
++nsMenuBar::Create(nsIWidget* aParent, nsIContent* aMenuBarNode)
 +{
 +    UniquePtr<nsMenuBar> menubar(new nsMenuBar(aMenuBarNode));
 +    if (NS_FAILED(menubar->Init(aParent))) {
@@ -1696,7 +1696,7 @@
 +nsCString
 +nsMenuBar::ObjectPath() const
 +{
-+    gchar *tmp;
++    gchar* tmp;
 +    g_object_get(mServer, DBUSMENU_SERVER_PROP_DBUS_OBJECT, &tmp, NULL);
 +
 +    nsCString result;
@@ -1803,8 +1803,8 @@
 +public:
 +    ~nsMenuBar() override;
 +
-+    static mozilla::UniquePtr<nsMenuBar> Create(nsIWidget *aParent,
-+                                                nsIContent *aMenuBarNode);
++    static mozilla::UniquePtr<nsMenuBar> Create(nsIWidget* aParent,
++                                                nsIContent* aMenuBarNode);
 +
 +    nsMenuObject::EType Type() const override;
 +
@@ -1839,28 +1839,28 @@
 +        eModifierMeta = (1 << 3)
 +    };
 +
-+    nsMenuBar(nsIContent *aMenuBarNode);
-+    nsresult Init(nsIWidget *aParent);
++    nsMenuBar(nsIContent* aMenuBarNode);
++    nsresult Init(nsIWidget* aParent);
 +    void Build();
 +    void DisconnectDocumentEventListeners();
 +    void SetShellShowingMenuBar(bool aShowing);
 +    void Focus();
 +    void Blur();
-+    ModifierFlags GetModifiersFromEvent(mozilla::dom::KeyboardEvent *aEvent);
-+    nsresult Keypress(mozilla::dom::KeyboardEvent *aEvent);
-+    nsresult KeyDown(mozilla::dom::KeyboardEvent *aEvent);
-+    nsresult KeyUp(mozilla::dom::KeyboardEvent *aEvent);
++    ModifierFlags GetModifiersFromEvent(mozilla::dom::KeyboardEvent* aEvent);
++    nsresult Keypress(mozilla::dom::KeyboardEvent* aEvent);
++    nsresult KeyDown(mozilla::dom::KeyboardEvent* aEvent);
++    nsresult KeyUp(mozilla::dom::KeyboardEvent* aEvent);
 +
-+    void HandleContentInserted(nsIContent *aChild,
-+                               nsIContent *aPrevSibling);
-+    void HandleContentRemoved(nsIContent *aChild);
++    void HandleContentInserted(nsIContent* aChild,
++                               nsIContent* aPrevSibling);
++    void HandleContentRemoved(nsIContent* aChild);
 +
-+    void OnContentInserted(nsIContent *aContainer, nsIContent *aChild,
-+                           nsIContent *aPrevSibling) override;
-+    void OnContentRemoved(nsIContent *aContainer, nsIContent *aChild) override;
++    void OnContentInserted(nsIContent* aContainer, nsIContent* aChild,
++                           nsIContent* aPrevSibling) override;
++    void OnContentRemoved(nsIContent* aContainer, nsIContent* aChild) override;
 +
-+    GtkWidget *mTopLevel;
-+    DbusmenuServer *mServer;
++    GtkWidget* mTopLevel;
++    DbusmenuServer* mServer;
 +    nsCOMPtr<mozilla::dom::Document> mDocument;
 +    RefPtr<DocEventListener> mEventListener;
 +
@@ -1899,14 +1899,14 @@
 +                                                           nsIContent*);
 +
 +template<class T>
-+static UniquePtr<nsMenuObject> CreateMenuObject(nsMenuContainer *aContainer,
-+                                                nsIContent *aContent)
++static UniquePtr<nsMenuObject> CreateMenuObject(nsMenuContainer* aContainer,
++                                                nsIContent* aContent)
 +{
 +    return UniquePtr<T>(new T(aContainer, aContent));
 +}
 +
 +static nsMenuObjectConstructor
-+GetMenuObjectConstructor(nsIContent *aContent)
++GetMenuObjectConstructor(nsIContent* aContent)
 +{
 +    if (aContent->IsXULElement(nsGkAtoms::menuitem)) {
 +        return CreateMenuObject<nsMenuItem>;
@@ -1920,25 +1920,25 @@
 +}
 +
 +static bool
-+ContentIsSupported(nsIContent *aContent)
++ContentIsSupported(nsIContent* aContent)
 +{
 +    return GetMenuObjectConstructor(aContent) ? true : false;
 +}
 +
-+nsMenuContainer::nsMenuContainer(nsMenuContainer *aParent,
-+                                 nsIContent *aContent) :
++nsMenuContainer::nsMenuContainer(nsMenuContainer* aParent,
++                                 nsIContent* aContent) :
 +    nsMenuObject(aParent, aContent)
 +{
 +}
 +
-+nsMenuContainer::nsMenuContainer(nsNativeMenuDocListener *aListener,
-+                                 nsIContent *aContent) :
++nsMenuContainer::nsMenuContainer(nsNativeMenuDocListener* aListener,
++                                 nsIContent* aContent) :
 +    nsMenuObject(aListener, aContent)
 +{
 +}
 +
 +UniquePtr<nsMenuObject>
-+nsMenuContainer::CreateChild(nsIContent *aContent)
++nsMenuContainer::CreateChild(nsIContent* aContent)
 +{
 +    nsMenuObjectConstructor ctor = GetMenuObjectConstructor(aContent);
 +    if (!ctor) {
@@ -1952,7 +1952,7 @@
 +}
 +
 +size_t
-+nsMenuContainer::IndexOf(nsIContent *aChild) const
++nsMenuContainer::IndexOf(nsIContent* aChild) const
 +{
 +    if (!aChild) {
 +        return NoIndex;
@@ -1983,7 +1983,7 @@
 +}
 +
 +void
-+nsMenuContainer::RemoveChild(nsIContent *aChild, bool aUpdateNative)
++nsMenuContainer::RemoveChild(nsIContent* aChild, bool aUpdateNative)
 +{
 +    size_t index = IndexOf(aChild);
 +    if (index == NoIndex) {
@@ -1995,7 +1995,7 @@
 +
 +void
 +nsMenuContainer::InsertChildAfter(UniquePtr<nsMenuObject> aChild,
-+                                  nsIContent *aPrevSibling,
++                                  nsIContent* aPrevSibling,
 +                                  bool aUpdateNative)
 +{
 +    size_t index = IndexOf(aPrevSibling);
@@ -2035,7 +2035,7 @@
 +}
 +
 +/* static */ nsIContent*
-+nsMenuContainer::GetPreviousSupportedSibling(nsIContent *aContent)
++nsMenuContainer::GetPreviousSupportedSibling(nsIContent* aContent)
 +{
 +    do {
 +        aContent = aContent->GetPreviousSibling();
@@ -2081,19 +2081,19 @@
 +
 +    // Return the first previous sibling that is of a type supported by the
 +    // menu system
-+    static nsIContent* GetPreviousSupportedSibling(nsIContent *aContent);
++    static nsIContent* GetPreviousSupportedSibling(nsIContent* aContent);
 +
 +    static const ChildTArray::index_type NoIndex;
 +
 +protected:
-+    nsMenuContainer(nsMenuContainer *aParent, nsIContent *aContent);
-+    nsMenuContainer(nsNativeMenuDocListener *aListener, nsIContent *aContent);
++    nsMenuContainer(nsMenuContainer* aParent, nsIContent* aContent);
++    nsMenuContainer(nsNativeMenuDocListener* aListener, nsIContent* aContent);
 +
 +    // Create a new child element for the specified content node
-+    mozilla::UniquePtr<nsMenuObject> CreateChild(nsIContent *aContent);
++    mozilla::UniquePtr<nsMenuObject> CreateChild(nsIContent* aContent);
 +
 +    // Return the index of the child for the specified content node
-+    size_t IndexOf(nsIContent *aChild) const;
++    size_t IndexOf(nsIContent* aChild) const;
 +
 +    size_t ChildCount() const { return mChildren.Length(); }
 +    nsMenuObject* ChildAt(size_t aIndex) const { return mChildren[aIndex].get(); }
@@ -2101,11 +2101,11 @@
 +    void RemoveChildAt(size_t aIndex, bool aUpdateNative = true);
 +
 +    // Remove the child that owns the specified content node
-+    void RemoveChild(nsIContent *aChild, bool aUpdateNative = true);
++    void RemoveChild(nsIContent* aChild, bool aUpdateNative = true);
 +
 +    // Insert a new child after the child that owns the specified content node
 +    void InsertChildAfter(mozilla::UniquePtr<nsMenuObject> aChild,
-+                          nsIContent *aPrevSibling,
++                          nsIContent* aPrevSibling,
 +                          bool aUpdateNative = true);
 +
 +    void AppendChild(mozilla::UniquePtr<nsMenuObject> aChild,
@@ -2416,12 +2416,12 @@
 +    NS_IMETHODIMP Run()
 +    {
 +        if (mMenuItem) {
-+            static_cast<nsMenuItem *>(mMenuItem.get())->UncheckSiblings();
++            static_cast<nsMenuItem*>(mMenuItem.get())->UncheckSiblings();
 +        }
 +        return NS_OK;
 +    }
 +
-+    nsMenuItemUncheckSiblingsRunnable(nsMenuItem *aMenuItem) :
++    nsMenuItemUncheckSiblingsRunnable(nsMenuItem* aMenuItem) :
 +        Runnable("nsMenuItemUncheckSiblingsRunnable"),
 +        mMenuItem(aMenuItem) { };
 +
@@ -2437,18 +2437,18 @@
 +}
 +
 +/* static */ void
-+nsMenuItem::item_activated_cb(DbusmenuMenuitem *menuitem,
++nsMenuItem::item_activated_cb(DbusmenuMenuitem* menuitem,
 +                              guint timestamp,
 +                              gpointer user_data)
 +{
-+    nsMenuItem *item = static_cast<nsMenuItem *>(user_data);
++    nsMenuItem* item = static_cast<nsMenuItem*>(user_data);
 +    item->Activate(timestamp);
 +}
 +
 +void
 +nsMenuItem::Activate(uint32_t aTimestamp)
 +{
-+    GdkWindow *window = gtk_widget_get_window(MenuBar()->TopLevelWindow());
++    GdkWindow* window = gtk_widget_get_window(MenuBar()->TopLevelWindow());
 +    gdk_x11_window_set_user_time(
 +        window, std::min(aTimestamp, gdk_x11_get_server_time(window)));
 +
@@ -2470,7 +2470,7 @@
 +                                            true);
 +    }
 +
-+    dom::Document *doc = ContentNode()->OwnerDoc();
++    dom::Document* doc = ContentNode()->OwnerDoc();
 +    ErrorResult rv;
 +    RefPtr<dom::Event> event =
 +        doc->CreateEvent(u"xulcommandevent"_ns,
@@ -2500,15 +2500,15 @@
 +
 +    // This kinda sucks, but Unity doesn't send a closed event
 +    // after activating a menuitem
-+    nsMenuObject *ancestor = Parent();
++    nsMenuObject* ancestor = Parent();
 +    while (ancestor && ancestor->Type() == eType_Menu) {
-+        static_cast<nsMenu *>(ancestor)->OnClose();
++        static_cast<nsMenu*>(ancestor)->OnClose();
 +        ancestor = ancestor->Parent();
 +    }
 +}
 +
 +void
-+nsMenuItem::CopyAttrFromNodeIfExists(nsIContent *aContent, nsAtom *aAttribute)
++nsMenuItem::CopyAttrFromNodeIfExists(nsIContent* aContent, nsAtom* aAttribute)
 +{
 +    nsAutoString value;
 +    if (aContent->AsElement()->GetAttr(kNameSpaceID_None, aAttribute, value)) {
@@ -2570,7 +2570,7 @@
 +void
 +nsMenuItem::UpdateAccel()
 +{
-+    dom::Document *doc = ContentNode()->GetUncomposedDoc();
++    dom::Document* doc = ContentNode()->GetUncomposedDoc();
 +    if (doc) {
 +        nsCOMPtr<nsIContent> oldKeyContent;
 +        oldKeyContent.swap(mKeyContent);
@@ -2606,7 +2606,7 @@
 +
 +    if (!modifiers.IsEmpty()) {
 +        char* str = ToNewUTF8String(modifiers);
-+        char *token = strtok(str, ", \t");
++        char* token = strtok(str, ", \t");
 +        while(token) {
 +            if (nsCRT::strcmp(token, "shift") == 0) {
 +                modifier |= GDK_SHIFT_MASK;
@@ -2666,14 +2666,14 @@
 +nsMenuBar*
 +nsMenuItem::MenuBar()
 +{
-+    nsMenuObject *tmp = this;
++    nsMenuObject* tmp = this;
 +    while (tmp->Parent()) {
 +        tmp = tmp->Parent();
 +    }
 +
 +    MOZ_ASSERT(tmp->Type() == eType_MenuBar, "The top-level should be a menubar");
 +
-+    return static_cast<nsMenuBar *>(tmp);
++    return static_cast<nsMenuBar*>(tmp);
 +}
 +
 +void
@@ -2691,14 +2691,14 @@
 +    ContentNode()->AsElement()->GetAttr(kNameSpaceID_None, nsGkAtoms::name,
 +                                        name);
 +
-+    nsIContent *parent = ContentNode()->GetParent();
++    nsIContent* parent = ContentNode()->GetParent();
 +    if (!parent) {
 +        return;
 +    }
 +
 +    uint32_t count = parent->GetChildCount();
 +    for (uint32_t i = 0; i < count; ++i) {
-+        nsIContent *sibling = parent->GetChildAt_Deprecated(i);
++        nsIContent* sibling = parent->GetChildAt_Deprecated(i);
 +
 +        if (sibling->IsComment()) {
 +            continue;
@@ -2731,7 +2731,7 @@
 +void
 +nsMenuItem::UpdateContentAttributes()
 +{
-+    dom::Document *doc = ContentNode()->GetUncomposedDoc();
++    dom::Document* doc = ContentNode()->GetUncomposedDoc();
 +    if (!doc) {
 +        return;
 +    }
@@ -2767,7 +2767,7 @@
 +}
 +
 +void
-+nsMenuItem::Update(const ComputedStyle *aComputedStyle)
++nsMenuItem::Update(const ComputedStyle* aComputedStyle)
 +{
 +    if (mNeedsUpdate) {
 +        mNeedsUpdate = false;
@@ -2783,7 +2783,7 @@
 +}
 +
 +bool
-+nsMenuItem::IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const
++nsMenuItem::IsCompatibleWithNativeData(DbusmenuMenuitem* aNativeData) const
 +{
 +    return nsCRT::strcmp(dbusmenu_menuitem_property_get(aNativeData,
 +                                                        DBUSMENU_MENUITEM_PROP_TYPE),
@@ -2805,7 +2805,7 @@
 +}
 +
 +void
-+nsMenuItem::OnAttributeChanged(nsIContent *aContent, nsAtom *aAttribute)
++nsMenuItem::OnAttributeChanged(nsIContent* aContent, nsAtom* aAttribute)
 +{
 +    MOZ_ASSERT(aContent == ContentNode() || aContent == mKeyContent,
 +               "Received an event that wasn't meant for us!");
@@ -2856,7 +2856,7 @@
 +    }
 +}
 +
-+nsMenuItem::nsMenuItem(nsMenuContainer *aParent, nsIContent *aContent) :
++nsMenuItem::nsMenuItem(nsMenuContainer* aParent, nsIContent* aContent) :
 +    nsMenuObject(aParent, aContent),
 +    mType(eMenuItemType_Normal),
 +    mIsChecked(false),
@@ -2918,7 +2918,7 @@
 +class nsMenuItem final : public nsMenuObject
 +{
 +public:
-+    nsMenuItem(nsMenuContainer *aParent, nsIContent *aContent);
++    nsMenuItem(nsMenuContainer* aParent, nsIContent* aContent);
 +    ~nsMenuItem() override;
 +
 +    nsMenuObject::EType Type() const override;
@@ -2938,12 +2938,12 @@
 +
 +    bool IsCheckboxOrRadioItem() const;
 +
-+    static void item_activated_cb(DbusmenuMenuitem *menuitem,
++    static void item_activated_cb(DbusmenuMenuitem* menuitem,
 +                                  guint timestamp,
 +                                  gpointer user_data);
 +    void Activate(uint32_t aTimestamp);
 +
-+    void CopyAttrFromNodeIfExists(nsIContent *aContent, nsAtom *aAtom);
++    void CopyAttrFromNodeIfExists(nsIContent* aContent, nsAtom* aAtom);
 +    void UpdateState();
 +    void UpdateTypeAndState();
 +    void UpdateAccel();
@@ -2952,11 +2952,11 @@
 +
 +    void InitializeNativeData() override;
 +    void UpdateContentAttributes() override;
-+    void Update(const mozilla::ComputedStyle *aComputedStyle) override;
-+    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const override;
++    void Update(const mozilla::ComputedStyle* aComputedStyle) override;
++    bool IsCompatibleWithNativeData(DbusmenuMenuitem* aNativeData) const override;
 +    nsMenuObject::PropertyFlags SupportedProperties() const override;
 +
-+    void OnAttributeChanged(nsIContent *aContent, nsAtom *aAttribute) override;
++    void OnAttributeChanged(nsIContent* aContent, nsAtom* aAttribute) override;
 +
 +    EMenuItemType mType;
 +
@@ -3028,7 +3028,7 @@
 +
 +#define MAX_WIDTH 350000
 +
-+const char *gPropertyStrings[] = {
++const char* gPropertyStrings[] = {
 +#define DBUSMENU_PROPERTY(e, s, b) s,
 +    DBUSMENU_PROPERTIES
 +#undef DBUSMENU_PROPERTY
@@ -3044,15 +3044,15 @@
 +    NS_DECL_ISUPPORTS
 +    NS_DECL_IMGINOTIFICATIONOBSERVER
 +
-+    nsMenuObjectIconLoader(nsMenuObject *aOwner) : mOwner(aOwner) { };
++    nsMenuObjectIconLoader(nsMenuObject* aOwner) : mOwner(aOwner) { };
 +
-+    void LoadIcon(const ComputedStyle *aComputedStyle);
++    void LoadIcon(const ComputedStyle* aComputedStyle);
 +    void Destroy();
 +
 +private:
 +    ~nsMenuObjectIconLoader() { };
 +
-+    nsMenuObject *mOwner;
++    nsMenuObject* mOwner;
 +    RefPtr<imgRequestProxy> mImageRequest;
 +    nsCOMPtr<nsIURI> mURI;
 +};
@@ -3060,8 +3060,8 @@
 +NS_IMPL_ISUPPORTS(nsMenuObjectIconLoader, imgINotificationObserver)
 +
 +void
-+nsMenuObjectIconLoader::Notify(imgIRequest *aProxy,
-+                               int32_t aType, const nsIntRect *aRect)
++nsMenuObjectIconLoader::Notify(imgIRequest* aProxy,
++                               int32_t aType, const nsIntRect* aRect)
 +{
 +    if (!mOwner) {
 +        return;
@@ -3137,12 +3137,12 @@
 +}
 +
 +void
-+nsMenuObjectIconLoader::LoadIcon(const ComputedStyle *aComputedStyle)
++nsMenuObjectIconLoader::LoadIcon(const ComputedStyle* aComputedStyle)
 +{
-+    dom::Document *doc = mOwner->ContentNode()->OwnerDoc();
++    dom::Document* doc = mOwner->ContentNode()->OwnerDoc();
 +
 +    nsCOMPtr<nsIURI> uri;
-+    imgRequestProxy *imageRequest = nullptr;
++    imgRequestProxy* imageRequest = nullptr;
 +
 +    nsAutoString uriString;
 +    if (mOwner->ContentNode()->AsElement()->GetAttr(kNameSpaceID_None,
@@ -3150,17 +3150,17 @@
 +                                                    uriString)) {
 +        NS_NewURI(getter_AddRefs(uri), uriString);
 +    } else {
-+        PresShell *shell = doc->GetPresShell();
++        PresShell* shell = doc->GetPresShell();
 +        if (!shell) {
 +            return;
 +        }
 +
-+        nsPresContext *pc = shell->GetPresContext();
++        nsPresContext* pc = shell->GetPresContext();
 +        if (!pc || !aComputedStyle) {
 +            return;
 +        }
 +
-+        const nsStyleList *list = aComputedStyle->StyleList();
++        const nsStyleList* list = aComputedStyle->StyleList();
 +        imageRequest = list->mListStyleImage.GetImageRequest();
 +        if (imageRequest) {
 +            imageRequest->GetURI(getter_AddRefs(uri));
@@ -3227,8 +3227,8 @@
 +CalculateTextWidth(const nsAString& aText)
 +{
 +    if (!gPangoLayout) {
-+        PangoFontMap *fontmap = pango_cairo_font_map_get_default();
-+        PangoContext *ctx = pango_font_map_create_context(fontmap);
++        PangoFontMap* fontmap = pango_cairo_font_map_get_default();
++        PangoContext* ctx = pango_font_map_create_context(fontmap);
 +        gPangoLayout = pango_layout_new(ctx);
 +        g_object_unref(ctx);
 +    }
@@ -3250,7 +3250,7 @@
 +        Preferences::GetLocalizedString("intl.ellipsis", ellipsis);
 +        if (!ellipsis.IsEmpty()) {
 +            uint32_t l = ellipsis.Length();
-+            const nsString::char_type *c = ellipsis.BeginReading();
++            const nsString::char_type* c = ellipsis.BeginReading();
 +            uint32_t i = 0;
 +            while (i < 3 && i < l) {
 +                sBuf[i++] = *(c++);
@@ -3277,7 +3277,7 @@
 +    return sEllipsisWidth;
 +}
 +
-+nsMenuObject::nsMenuObject(nsMenuContainer *aParent, nsIContent *aContent) :
++nsMenuObject::nsMenuObject(nsMenuContainer* aParent, nsIContent* aContent) :
 +    mContent(aContent),
 +    mListener(aParent->DocListener()),
 +    mParent(aParent),
@@ -3288,8 +3288,8 @@
 +    MOZ_ASSERT(mParent);
 +}
 +
-+nsMenuObject::nsMenuObject(nsNativeMenuDocListener *aListener,
-+                           nsIContent *aContent) :
++nsMenuObject::nsMenuObject(nsNativeMenuDocListener* aListener,
++                           nsIContent* aContent) :
 +    mContent(aContent),
 +    mListener(aListener),
 +    mParent(nullptr),
@@ -3313,12 +3313,12 @@
 +    mContent->AsElement()->GetAttr(kNameSpaceID_None, nsGkAtoms::accesskey,
 +                                   accesskey);
 +
-+    const nsAutoString::char_type *akey = accesskey.BeginReading();
++    const nsAutoString::char_type* akey = accesskey.BeginReading();
 +    char16_t keyLower = ToLowerCase(*akey);
 +    char16_t keyUpper = ToUpperCase(*akey);
 +
-+    const nsAutoString::char_type *iter = label.BeginReading();
-+    const nsAutoString::char_type *end = label.EndReading();
++    const nsAutoString::char_type* iter = label.BeginReading();
++    const nsAutoString::char_type* end = label.EndReading();
 +    uint32_t length = label.Length();
 +    uint32_t pos = 0;
 +    bool foundAccessKey = false;
@@ -3337,7 +3337,7 @@
 +
 +        iter = label.BeginReading() + pos;
 +        end = label.EndReading();
-+        nsAutoString::char_type *cur = label.BeginWriting() + pos;
++        nsAutoString::char_type* cur = label.BeginWriting() + pos;
 +
 +        memmove(cur + 1, cur, (length - 1 - pos) * sizeof(nsAutoString::char_type));
 +        *cur = nsAutoString::char_type('_');
@@ -3398,7 +3398,7 @@
 +}
 +
 +void
-+nsMenuObject::UpdateVisibility(const ComputedStyle *aComputedStyle)
++nsMenuObject::UpdateVisibility(const ComputedStyle* aComputedStyle)
 +{
 +    bool vis = true;
 +
@@ -3429,7 +3429,7 @@
 +}
 +
 +void
-+nsMenuObject::UpdateIcon(const ComputedStyle *aComputedStyle)
++nsMenuObject::UpdateIcon(const ComputedStyle* aComputedStyle)
 +{
 +    if (ShouldShowIcon()) {
 +        if (!mIconLoader) {
@@ -3469,7 +3469,7 @@
 +}
 +
 +bool
-+nsMenuObject::IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const
++nsMenuObject::IsCompatibleWithNativeData(DbusmenuMenuitem* aNativeData) const
 +{
 +    return true;
 +}
@@ -3480,7 +3480,7 @@
 +}
 +
 +void
-+nsMenuObject::Update(const ComputedStyle *aComputedStyle)
++nsMenuObject::Update(const ComputedStyle* aComputedStyle)
 +{
 +}
 +
@@ -3492,7 +3492,7 @@
 +    // The following works by default (because xul.css hides images in menuitems
 +    // that don't have the "menuitem-with-favicon" class). It's possible a third
 +    // party theme could override this, but, oh well...
-+    const nsAttrValue *classes = mContent->AsElement()->GetClasses();
++    const nsAttrValue* classes = mContent->AsElement()->GetClasses();
 +    if (!classes) {
 +        return false;
 +    }
@@ -3546,7 +3546,7 @@
 +}
 +
 +nsresult
-+nsMenuObject::AdoptNativeData(DbusmenuMenuitem *aNativeData)
++nsMenuObject::AdoptNativeData(DbusmenuMenuitem* aNativeData)
 +{
 +    MOZ_ASSERT(mNativeData == nullptr, "This node already has a DbusmenuMenuitem. The old one will be leaked");
 +
@@ -3589,21 +3589,21 @@
 +}
 +
 +/* static */ void
-+nsWeakMenuObject::AddWeakReference(nsWeakMenuObject *aWeak)
++nsWeakMenuObject::AddWeakReference(nsWeakMenuObject* aWeak)
 +{
 +    aWeak->mPrev = sHead;
 +    sHead = aWeak;
 +}
 +
 +/* static */ void
-+nsWeakMenuObject::RemoveWeakReference(nsWeakMenuObject *aWeak)
++nsWeakMenuObject::RemoveWeakReference(nsWeakMenuObject* aWeak)
 +{
 +    if (aWeak == sHead) {
 +        sHead = aWeak->mPrev;
 +        return;
 +    }
 +
-+    nsWeakMenuObject *weak = sHead;
++    nsWeakMenuObject* weak = sHead;
 +    while (weak && weak->mPrev != aWeak) {
 +        weak = weak->mPrev;
 +    }
@@ -3614,9 +3614,9 @@
 +}
 +
 +/* static */ void
-+nsWeakMenuObject::NotifyDestroyed(nsMenuObject *aMenuObject)
++nsWeakMenuObject::NotifyDestroyed(nsMenuObject* aMenuObject)
 +{
-+    nsWeakMenuObject *weak = sHead;
++    nsWeakMenuObject* weak = sHead;
 +    while (weak) {
 +        if (weak->mMenuObject == aMenuObject) {
 +            weak->mMenuObject = nullptr;
@@ -3700,14 +3700,14 @@
 +    void CreateNativeData();
 +
 +    // Adopt the specified native menu item node (called by containers)
-+    nsresult AdoptNativeData(DbusmenuMenuitem *aNativeData);
++    nsresult AdoptNativeData(DbusmenuMenuitem* aNativeData);
 +
 +    // Called by the container to tell us that it's opening
 +    void ContainerIsOpening();
 +
 +protected:
-+    nsMenuObject(nsMenuContainer *aParent, nsIContent *aContent);
-+    nsMenuObject(nsNativeMenuDocListener *aListener, nsIContent *aContent);
++    nsMenuObject(nsMenuContainer* aParent, nsIContent* aContent);
++    nsMenuObject(nsNativeMenuDocListener* aListener, nsIContent* aContent);
 +
 +    enum PropertyFlags {
 +#define DBUSMENU_PROPERTY(e, s, b) eProp##e = (1 << b),
@@ -3716,9 +3716,9 @@
 +    };
 +
 +    void UpdateLabel();
-+    void UpdateVisibility(const mozilla::ComputedStyle *aComputedStyle);
++    void UpdateVisibility(const mozilla::ComputedStyle* aComputedStyle);
 +    void UpdateSensitivity();
-+    void UpdateIcon(const mozilla::ComputedStyle *aComputedStyle);
++    void UpdateIcon(const mozilla::ComputedStyle* aComputedStyle);
 +
 +    already_AddRefed<const mozilla::ComputedStyle> GetComputedStyle();
 +
@@ -3736,7 +3736,7 @@
 +    // Determine whether this menu object could use the specified
 +    // native item. Returns true by default but can be overridden by subclasses
 +    virtual bool
-+    IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const;
++    IsCompatibleWithNativeData(DbusmenuMenuitem* aNativeData) const;
 +
 +    // Update attributes on this objects content node when the container opens.
 +    // This is called before style resolution, and should be implemented by
@@ -3747,7 +3747,7 @@
 +    // Update properties that should be refreshed when the container opens.
 +    // This should be implemented by subclasses that have properties which
 +    // need refreshing
-+    virtual void Update(const mozilla::ComputedStyle *aComputedStyle);
++    virtual void Update(const mozilla::ComputedStyle* aComputedStyle);
 +
 +    bool ShouldShowIcon() const;
 +    void ClearIcon();
@@ -3759,8 +3759,8 @@
 +    // after running the nsMenuObject destructor for the top-level menu object,
 +    // hence the strong ref
 +    RefPtr<nsNativeMenuDocListener> mListener;
-+    nsMenuContainer *mParent; // [weak]
-+    DbusmenuMenuitem *mNativeData; // [strong]
++    nsMenuContainer* mParent; // [weak]
++    DbusmenuMenuitem* mNativeData; // [strong]
 +    RefPtr<nsMenuObjectIconLoader> mIconLoader;
 +};
 +
@@ -3770,7 +3770,7 @@
 +public:
 +    nsWeakMenuObject() : mPrev(nullptr), mMenuObject(nullptr) {}
 +
-+    nsWeakMenuObject(nsMenuObject *aMenuObject) :
++    nsWeakMenuObject(nsMenuObject* aMenuObject) :
 +        mPrev(nullptr), mMenuObject(aMenuObject)
 +    {
 +        AddWeakReference(this);
@@ -3784,16 +3784,16 @@
 +
 +    explicit operator bool() const { return !!mMenuObject; }
 +
-+    static void NotifyDestroyed(nsMenuObject *aMenuObject);
++    static void NotifyDestroyed(nsMenuObject* aMenuObject);
 +
 +private:
-+    static void AddWeakReference(nsWeakMenuObject *aWeak);
-+    static void RemoveWeakReference(nsWeakMenuObject *aWeak);
++    static void AddWeakReference(nsWeakMenuObject* aWeak);
++    static void RemoveWeakReference(nsWeakMenuObject* aWeak);
 +
-+    nsWeakMenuObject *mPrev;
-+    static nsWeakMenuObject *sHead;
++    nsWeakMenuObject* mPrev;
++    static nsWeakMenuObject* sHead;
 +
-+    nsMenuObject *mMenuObject;
++    nsMenuObject* mMenuObject;
 +};
 +
 +#endif /* __nsMenuObject_h__ */
@@ -3827,13 +3827,13 @@
 +}
 +
 +void
-+nsMenuSeparator::Update(const ComputedStyle *aComputedStyle)
++nsMenuSeparator::Update(const ComputedStyle* aComputedStyle)
 +{
 +    UpdateVisibility(aComputedStyle);
 +}
 +
 +bool
-+nsMenuSeparator::IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const
++nsMenuSeparator::IsCompatibleWithNativeData(DbusmenuMenuitem* aNativeData) const
 +{
 +    return nsCRT::strcmp(dbusmenu_menuitem_property_get(aNativeData,
 +                                                        DBUSMENU_MENUITEM_PROP_TYPE),
@@ -3850,7 +3850,7 @@
 +}
 +
 +void
-+nsMenuSeparator::OnAttributeChanged(nsIContent *aContent, nsAtom *aAttribute)
++nsMenuSeparator::OnAttributeChanged(nsIContent* aContent, nsAtom* aAttribute)
 +{
 +    MOZ_ASSERT(aContent == ContentNode(), "Received an event that wasn't meant for us!");
 +
@@ -3865,8 +3865,8 @@
 +    }
 +}
 +
-+nsMenuSeparator::nsMenuSeparator(nsMenuContainer *aParent,
-+                                 nsIContent *aContent) :
++nsMenuSeparator::nsMenuSeparator(nsMenuContainer* aParent,
++                                 nsIContent* aContent) :
 +    nsMenuObject(aParent, aContent)
 +{
 +    MOZ_COUNT_CTOR(nsMenuSeparator);
@@ -3907,18 +3907,18 @@
 +class nsMenuSeparator final : public nsMenuObject
 +{
 +public:
-+    nsMenuSeparator(nsMenuContainer *aParent, nsIContent *aContent);
++    nsMenuSeparator(nsMenuContainer* aParent, nsIContent* aContent);
 +    ~nsMenuSeparator();
 +
 +    nsMenuObject::EType Type() const override;
 +
 +private:
 +    void InitializeNativeData() override;
-+    void Update(const mozilla::ComputedStyle *aComputedStyle) override;
-+    bool IsCompatibleWithNativeData(DbusmenuMenuitem *aNativeData) const override;
++    void Update(const mozilla::ComputedStyle* aComputedStyle) override;
++    bool IsCompatibleWithNativeData(DbusmenuMenuitem* aNativeData) const override;
 +    nsMenuObject::PropertyFlags SupportedProperties() const override;
 +
-+    void OnAttributeChanged(nsIContent *aContent, nsAtom *aAttribute) override;
++    void OnAttributeChanged(nsIContent* aContent, nsAtom* aAttribute) override;
 +};
 +
 +#endif /* __nsMenuSeparator_h__ */
@@ -3948,7 +3948,7 @@
 +
 +uint32_t nsNativeMenuDocListener::sUpdateBlockersCount = 0;
 +
-+nsNativeMenuDocListenerTArray *gPendingListeners;
++nsNativeMenuDocListenerTArray* gPendingListeners;
 +
 +/*
 + * Small helper which caches a single listener, so that consecutive
@@ -3957,8 +3957,8 @@
 +class MOZ_STACK_CLASS DispatchHelper
 +{
 +public:
-+    DispatchHelper(nsNativeMenuDocListener *aListener,
-+                   nsIContent *aContent) :
++    DispatchHelper(nsNativeMenuDocListener* aListener,
++                   nsIContent* aContent) :
 +                   mObserver(nullptr)
 +    {
 +        if (aContent == aListener->mLastSource) {
@@ -3979,7 +3979,7 @@
 +    bool HasObserver() const { return !!mObserver; }
 +
 +private:
-+    nsNativeMenuChangeObserver *mObserver;
++    nsNativeMenuChangeObserver* mObserver;
 +};
 +
 +NS_IMPL_ISUPPORTS(nsNativeMenuDocListener, nsIMutationObserver)
@@ -3992,9 +3992,9 @@
 +}
 +
 +void
-+nsNativeMenuDocListener::AttributeChanged(mozilla::dom::Element *aElement,
++nsNativeMenuDocListener::AttributeChanged(mozilla::dom::Element* aElement,
 +                                          int32_t aNameSpaceID,
-+                                          nsAtom *aAttribute,
++                                          nsAtom* aAttribute,
 +                                          int32_t aModType,
 +                                          const nsAttrValue* aOldValue)
 +{
@@ -4003,7 +4003,7 @@
 +        return;
 +    }
 +
-+    MutationRecord *m = mPendingMutations.AppendElement(MakeUnique<MutationRecord>())->get();
++    MutationRecord* m = mPendingMutations.AppendElement(MakeUnique<MutationRecord>())->get();
 +    m->mType = MutationRecord::eAttributeChanged;
 +    m->mTarget = aElement;
 +    m->mAttribute = aAttribute;
@@ -4034,7 +4034,7 @@
 +        return;
 +    }
 +
-+    MutationRecord *m = mPendingMutations.AppendElement(MakeUnique<MutationRecord>())->get();
++    MutationRecord* m = mPendingMutations.AppendElement(MakeUnique<MutationRecord>())->get();
 +    m->mType = MutationRecord::eContentInserted;
 +    m->mTarget = container;
 +    m->mChild = aChild;
@@ -4056,7 +4056,7 @@
 +        return;
 +    }
 +
-+    MutationRecord *m = mPendingMutations.AppendElement(MakeUnique<MutationRecord>())->get();
++    MutationRecord* m = mPendingMutations.AppendElement(MakeUnique<MutationRecord>())->get();
 +    m->mType = MutationRecord::eContentRemoved;
 +    m->mTarget = container;
 +    m->mChild = aChild;
@@ -4065,14 +4065,14 @@
 +}
 +
 +void
-+nsNativeMenuDocListener::NodeWillBeDestroyed(nsINode *aNode)
++nsNativeMenuDocListener::NodeWillBeDestroyed(nsINode* aNode)
 +{
 +    mDocument = nullptr;
 +}
 +
 +void
-+nsNativeMenuDocListener::DoAttributeChanged(nsIContent *aContent,
-+                                            nsAtom *aAttribute)
++nsNativeMenuDocListener::DoAttributeChanged(nsIContent* aContent,
++                                            nsAtom* aAttribute)
 +{
 +    DispatchHelper h(this, aContent);
 +    if (h.HasObserver()) {
@@ -4081,9 +4081,9 @@
 +}
 +
 +void
-+nsNativeMenuDocListener::DoContentInserted(nsIContent *aContainer,
-+                                           nsIContent *aChild,
-+                                           nsIContent *aPrevSibling)
++nsNativeMenuDocListener::DoContentInserted(nsIContent* aContainer,
++                                           nsIContent* aChild,
++                                           nsIContent* aPrevSibling)
 +{
 +    DispatchHelper h(this, aContainer);
 +    if (h.HasObserver()) {
@@ -4092,8 +4092,8 @@
 +}
 +
 +void
-+nsNativeMenuDocListener::DoContentRemoved(nsIContent *aContainer,
-+                                          nsIContent *aChild)
++nsNativeMenuDocListener::DoContentRemoved(nsIContent* aContainer,
++                                          nsIContent* aChild)
 +{
 +    DispatchHelper h(this, aContainer);
 +    if (h.HasObserver()) {
@@ -4102,7 +4102,7 @@
 +}
 +
 +void
-+nsNativeMenuDocListener::DoBeginUpdates(nsIContent *aTarget)
++nsNativeMenuDocListener::DoBeginUpdates(nsIContent* aTarget)
 +{
 +    DispatchHelper h(this, aTarget);
 +    if (h.HasObserver()) {
@@ -4111,7 +4111,7 @@
 +}
 +
 +void
-+nsNativeMenuDocListener::DoEndUpdates(nsIContent *aTarget)
++nsNativeMenuDocListener::DoEndUpdates(nsIContent* aTarget)
 +{
 +    DispatchHelper h(this, aTarget);
 +    if (h.HasObserver()) {
@@ -4122,11 +4122,11 @@
 +void
 +nsNativeMenuDocListener::FlushPendingMutations()
 +{
-+    nsIContent *currentTarget = nullptr;
++    nsIContent* currentTarget = nullptr;
 +    bool inUpdateSequence = false;
 +
 +    while (mPendingMutations.Length() > 0) {
-+        MutationRecord *m = mPendingMutations[0].get();
++        MutationRecord* m = mPendingMutations[0].get();
 +
 +        if (m->mTarget != currentTarget) {
 +            if (inUpdateSequence) {
@@ -4166,7 +4166,7 @@
 +}
 +
 +/* static */ void
-+nsNativeMenuDocListener::ScheduleFlush(nsNativeMenuDocListener *aListener)
++nsNativeMenuDocListener::ScheduleFlush(nsNativeMenuDocListener* aListener)
 +{
 +    MOZ_ASSERT(sUpdateBlockersCount > 0, "Shouldn't be doing this now");
 +
@@ -4181,7 +4181,7 @@
 +}
 +
 +/* static */ void
-+nsNativeMenuDocListener::CancelFlush(nsNativeMenuDocListener *aListener)
++nsNativeMenuDocListener::CancelFlush(nsNativeMenuDocListener* aListener)
 +{
 +    if (!gPendingListeners) {
 +        return;
@@ -4204,7 +4204,7 @@
 +    sUpdateBlockersCount--;
 +}
 +
-+nsNativeMenuDocListener::nsNativeMenuDocListener(nsIContent *aRootNode) :
++nsNativeMenuDocListener::nsNativeMenuDocListener(nsIContent* aRootNode) :
 +    mRootNode(aRootNode),
 +    mDocument(nullptr),
 +    mLastSource(nullptr),
@@ -4214,8 +4214,8 @@
 +}
 +
 +void
-+nsNativeMenuDocListener::RegisterForContentChanges(nsIContent *aContent,
-+                                                   nsNativeMenuChangeObserver *aObserver)
++nsNativeMenuDocListener::RegisterForContentChanges(nsIContent* aContent,
++                                                   nsNativeMenuChangeObserver* aObserver)
 +{
 +    MOZ_ASSERT(aContent, "Need content parameter");
 +    MOZ_ASSERT(aObserver, "Need observer parameter");
@@ -4223,7 +4223,7 @@
 +        return;
 +    }
 +
-+    DebugOnly<nsNativeMenuChangeObserver *> old;
++    DebugOnly<nsNativeMenuChangeObserver*> old;
 +    MOZ_ASSERT(!mContentToObserverTable.Get(aContent, &old) || old == aObserver,
 +               "Multiple observers for the same content node are not supported");
 +
@@ -4231,7 +4231,7 @@
 +}
 +
 +void
-+nsNativeMenuDocListener::UnregisterForContentChanges(nsIContent *aContent)
++nsNativeMenuDocListener::UnregisterForContentChanges(nsIContent* aContent)
 +{
 +    MOZ_ASSERT(aContent, "Need content parameter");
 +    if (!aContent) {
@@ -4310,16 +4310,16 @@
 +public:
 +    NS_DECL_ISUPPORTS
 +
-+    nsNativeMenuDocListener(nsIContent *aRootNode);
++    nsNativeMenuDocListener(nsIContent* aRootNode);
 +
 +    // Register an observer to receive mutation events for the specified
 +    // content node. The caller must keep the observer alive until
 +    // UnregisterForContentChanges is called.
-+    void RegisterForContentChanges(nsIContent *aContent,
-+                                   nsNativeMenuChangeObserver *aObserver);
++    void RegisterForContentChanges(nsIContent* aContent,
++                                   nsNativeMenuChangeObserver* aObserver);
 +
 +    // Unregister the registered observer for the specified content node
-+    void UnregisterForContentChanges(nsIContent *aContent);
++    void UnregisterForContentChanges(nsIContent* aContent);
 +
 +    // Start listening to the document and forwarding DOM mutations to
 +    // registered observers.
@@ -4374,27 +4374,27 @@
 +    NS_DECL_NSIMUTATIONOBSERVER_CONTENTREMOVED
 +    NS_DECL_NSIMUTATIONOBSERVER_NODEWILLBEDESTROYED
 +
-+    void DoAttributeChanged(nsIContent *aContent, nsAtom *aAttribute);
-+    void DoContentInserted(nsIContent *aContainer,
-+                           nsIContent *aChild,
-+                           nsIContent *aPrevSibling);
-+    void DoContentRemoved(nsIContent *aContainer, nsIContent *aChild);
-+    void DoBeginUpdates(nsIContent *aTarget);
-+    void DoEndUpdates(nsIContent *aTarget);
++    void DoAttributeChanged(nsIContent* aContent, nsAtom* aAttribute);
++    void DoContentInserted(nsIContent* aContainer,
++                           nsIContent* aChild,
++                           nsIContent* aPrevSibling);
++    void DoContentRemoved(nsIContent* aContainer, nsIContent* aChild);
++    void DoBeginUpdates(nsIContent* aTarget);
++    void DoEndUpdates(nsIContent* aTarget);
 +
 +    void FlushPendingMutations();
-+    static void ScheduleFlush(nsNativeMenuDocListener *aListener);
-+    static void CancelFlush(nsNativeMenuDocListener *aListener);
++    static void ScheduleFlush(nsNativeMenuDocListener* aListener);
++    static void CancelFlush(nsNativeMenuDocListener* aListener);
 +
 +    static void AddUpdateBlocker() { ++sUpdateBlockersCount; }
 +    static void RemoveUpdateBlocker();
 +
 +    nsCOMPtr<nsIContent> mRootNode;
-+    mozilla::dom::Document *mDocument;
-+    nsIContent *mLastSource;
-+    nsNativeMenuChangeObserver *mLastTarget;
++    mozilla::dom::Document* mDocument;
++    nsIContent* mLastSource;
++    nsNativeMenuChangeObserver* mLastTarget;
 +    nsTArray<mozilla::UniquePtr<MutationRecord> > mPendingMutations;
-+    nsTHashMap<nsPtrHashKey<nsIContent>, nsNativeMenuChangeObserver *> mContentToObserverTable;
++    nsTHashMap<nsPtrHashKey<nsIContent>, nsNativeMenuChangeObserver*> mContentToObserverTable;
 +
 +    static uint32_t sUpdateBlockersCount;
 +};
@@ -4408,18 +4408,18 @@
 +class nsNativeMenuChangeObserver
 +{
 +public:
-+    virtual void OnAttributeChanged(nsIContent *aContent, nsAtom *aAttribute) {}
++    virtual void OnAttributeChanged(nsIContent* aContent, nsAtom* aAttribute) {}
 +
-+    virtual void OnContentInserted(nsIContent *aContainer,
-+                                   nsIContent *aChild,
-+                                   nsIContent *aPrevSibling) {}
++    virtual void OnContentInserted(nsIContent* aContainer,
++                                   nsIContent* aChild,
++                                   nsIContent* aPrevSibling) {}
 +
-+    virtual void OnContentRemoved(nsIContent *aContainer, nsIContent *aChild) {}
++    virtual void OnContentRemoved(nsIContent* aContainer, nsIContent* aChild) {}
 +
 +    // Signals the start of a sequence of more than 1 event for the specified
 +    // node. This only happens when events are flushed as all BlockUpdatesScope
 +    // instances go out of scope
-+    virtual void OnBeginUpdates(nsIContent *aContent) {};
++    virtual void OnBeginUpdates(nsIContent* aContent) {};
 +
 +    // Signals the end of a sequence of events
 +    virtual void OnEndUpdates() {};
@@ -4499,7 +4499,7 @@
 +#define g_dbus_proxy_call_finish _g_dbus_proxy_call_finish
 +#define g_dbus_proxy_get_name_owner _g_dbus_proxy_get_name_owner
 +
-+static PRLibrary *gGIOLib = nullptr;
++static PRLibrary* gGIOLib = nullptr;
 +
 +static nsresult
 +GDBusInit()
@@ -4608,7 +4608,7 @@
 +     * draw window menubars if we are running inside Unity. This should
 +     * mean that we avoid temporarily displaying the window menubar ourselves
 +     */
-+    const char *desktop = getenv("XDG_CURRENT_DESKTOP");
++    const char* desktop = getenv("XDG_CURRENT_DESKTOP");
 +    if (nsCRT::strcmp(desktop, "Unity") == 0) {
 +        SetOnline(true);
 +    }
@@ -4646,7 +4646,7 @@
 +}
 +
 +void
-+nsNativeMenuService::RegisterNativeMenuBar(nsMenuBar *aMenuBar)
++nsNativeMenuService::RegisterNativeMenuBar(nsMenuBar* aMenuBar)
 +{
 +    if (!mOnline) {
 +        return;
@@ -4671,7 +4671,7 @@
 +        return;
 +    }
 +
-+    GCancellable *cancellable = g_cancellable_new();
++    GCancellable* cancellable = g_cancellable_new();
 +    mMenuBarRegistrationCancellables.InsertOrUpdate(aMenuBar, cancellable);
 +
 +    // We keep a weak ref because we can't assume that GDBus cancellation
@@ -4685,20 +4685,20 @@
 +}
 +
 +/* static */ void
-+nsNativeMenuService::name_owner_changed_cb(GObject *gobject,
-+                                           GParamSpec *pspec,
++nsNativeMenuService::name_owner_changed_cb(GObject* gobject,
++                                           GParamSpec* pspec,
 +                                           gpointer user_data)
 +{
 +    nsNativeMenuService::GetSingleton()->OnNameOwnerChanged();
 +}
 +
 +/* static */ void
-+nsNativeMenuService::proxy_created_cb(GObject *source_object,
-+                                      GAsyncResult *res,
++nsNativeMenuService::proxy_created_cb(GObject* source_object,
++                                      GAsyncResult* res,
 +                                      gpointer user_data)
 +{
-+    GError *error = nullptr;
-+    GDBusProxy *proxy = g_dbus_proxy_new_for_bus_finish(res, &error);
++    GError* error = nullptr;
++    GDBusProxy* proxy = g_dbus_proxy_new_for_bus_finish(res, &error);
 +    if (error && g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
 +        g_error_free(error);
 +        return;
@@ -4710,7 +4710,7 @@
 +
 +    // We need this check because we can't assume that GDBus cancellation
 +    // is reliable (see https://launchpad.net/bugs/953562)
-+    nsNativeMenuService *self = nsNativeMenuService::GetSingleton();
++    nsNativeMenuService* self = nsNativeMenuService::GetSingleton();
 +    if (!self) {
 +        if (proxy) {
 +            g_object_unref(proxy);
@@ -4722,14 +4722,14 @@
 +}
 +
 +/* static */ void
-+nsNativeMenuService::register_native_menubar_cb(GObject *source_object,
-+                                                GAsyncResult *res,
++nsNativeMenuService::register_native_menubar_cb(GObject* source_object,
++                                                GAsyncResult* res,
 +                                                gpointer user_data)
 +{
-+    nsMenuBar *menuBar = static_cast<nsMenuBar *>(user_data);
++    nsMenuBar* menuBar = static_cast<nsMenuBar*>(user_data);
 +
-+    GError *error = nullptr;
-+    GVariant *results = g_dbus_proxy_call_finish(G_DBUS_PROXY(source_object),
++    GError* error = nullptr;
++    GVariant* results = g_dbus_proxy_call_finish(G_DBUS_PROXY(source_object),
 +                                                 res, &error);
 +    if (results) {
 +        // There's nothing useful in the response
@@ -4746,7 +4746,7 @@
 +        g_error_free(error);
 +    }
 +
-+    nsNativeMenuService *self = nsNativeMenuService::GetSingleton();
++    nsNativeMenuService* self = nsNativeMenuService::GetSingleton();
 +    if (!self) {
 +        return;
 +    }
@@ -4755,11 +4755,11 @@
 +}
 +
 +/* static */ gboolean
-+nsNativeMenuService::map_event_cb(GtkWidget *widget,
-+                                  GdkEvent *event,
++nsNativeMenuService::map_event_cb(GtkWidget* widget,
++                                  GdkEvent* event,
 +                                  gpointer user_data)
 +{
-+    nsMenuBar *menubar = static_cast<nsMenuBar *>(user_data);
++    nsMenuBar* menubar = static_cast<nsMenuBar*>(user_data);
 +    nsNativeMenuService::GetSingleton()->RegisterNativeMenuBar(menubar);
 +
 +    return FALSE;
@@ -4768,13 +4768,13 @@
 +void
 +nsNativeMenuService::OnNameOwnerChanged()
 +{
-+    char *owner = g_dbus_proxy_get_name_owner(mDbusProxy);
++    char* owner = g_dbus_proxy_get_name_owner(mDbusProxy);
 +    SetOnline(owner ? true : false);
 +    g_free(owner);
 +}
 +
 +void
-+nsNativeMenuService::OnProxyCreated(GDBusProxy *aProxy)
++nsNativeMenuService::OnProxyCreated(GDBusProxy* aProxy)
 +{
 +    mDbusProxy = aProxy;
 +
@@ -4793,12 +4793,12 @@
 +}
 +
 +void
-+nsNativeMenuService::OnNativeMenuBarRegistered(nsMenuBar *aMenuBar,
++nsNativeMenuService::OnNativeMenuBarRegistered(nsMenuBar* aMenuBar,
 +                                               bool aSuccess)
 +{
 +    // Don't assume that GDBus cancellation is reliable (ie, |aMenuBar| might
 +    // have already been deleted (see https://launchpad.net/bugs/953562)
-+    GCancellable *cancellable = nullptr;
++    GCancellable* cancellable = nullptr;
 +    if (!mMenuBarRegistrationCancellables.Get(aMenuBar, &cancellable)) {
 +        return;
 +    }
@@ -4812,8 +4812,8 @@
 +}
 +
 +/* static */ void
-+nsNativeMenuService::PrefChangedCallback(const char *aPref,
-+                                         void *aClosure)
++nsNativeMenuService::PrefChangedCallback(const char* aPref,
++                                         void* aClosure)
 +{
 +    nsNativeMenuService::GetSingleton()->PrefChanged();
 +}
@@ -4830,8 +4830,8 @@
 +}
 +
 +NS_IMETHODIMP
-+nsNativeMenuService::CreateNativeMenuBar(nsIWidget *aParent,
-+                                         mozilla::dom::Element *aMenuBarNode)
++nsNativeMenuService::CreateNativeMenuBar(nsIWidget* aParent,
++                                         mozilla::dom::Element* aMenuBarNode)
 +{
 +    NS_ENSURE_ARG(aParent);
 +    NS_ENSURE_ARG(aMenuBarNode);
@@ -4860,7 +4860,7 @@
 +    mMenuBars.AppendElement(menubar.get());
 +    RegisterNativeMenuBar(menubar.get());
 +
-+    static_cast<nsWindow *>(aParent)->SetMenuBar(std::move(menubar));
++    static_cast<nsWindow*>(aParent)->SetMenuBar(std::move(menubar));
 +
 +    return NS_OK;
 +}
@@ -4892,7 +4892,7 @@
 +}
 +
 +void
-+nsNativeMenuService::NotifyNativeMenuBarDestroyed(nsMenuBar *aMenuBar)
++nsNativeMenuService::NotifyNativeMenuBarDestroyed(nsMenuBar* aMenuBar)
 +{
 +    g_signal_handlers_disconnect_by_func(aMenuBar->TopLevelWindow(),
 +                                         FuncToGpointer(map_event_cb),
@@ -4900,7 +4900,7 @@
 +
 +    mMenuBars.RemoveElement(aMenuBar);
 +
-+    GCancellable *cancellable = nullptr;
++    GCancellable* cancellable = nullptr;
 +    if (mMenuBarRegistrationCancellables.Get(aMenuBar, &cancellable)) {
 +        mMenuBarRegistrationCancellables.Remove(aMenuBar);
 +        g_cancellable_cancel(cancellable);
@@ -4956,7 +4956,7 @@
 +    static nsNativeMenuService* GetSingleton();
 +
 +    // Called by a menubar when it is deleted
-+    void NotifyNativeMenuBarDestroyed(nsMenuBar *aMenuBar);
++    void NotifyNativeMenuBarDestroyed(nsMenuBar* aMenuBar);
 +
 +private:
 +    nsNativeMenuService();
@@ -4965,39 +4965,39 @@
 +
 +    static void EnsureInitialized();
 +    void SetOnline(bool aOnline);
-+    void RegisterNativeMenuBar(nsMenuBar *aMenuBar);
-+    static void name_owner_changed_cb(GObject *gobject,
-+                                      GParamSpec *pspec,
++    void RegisterNativeMenuBar(nsMenuBar* aMenuBar);
++    static void name_owner_changed_cb(GObject* gobject,
++                                      GParamSpec* pspec,
 +                                      gpointer user_data);
-+    static void proxy_created_cb(GObject *source_object,
-+                                 GAsyncResult *res,
++    static void proxy_created_cb(GObject* source_object,
++                                 GAsyncResult* res,
 +                                 gpointer user_data);
-+    static void register_native_menubar_cb(GObject *source_object,
-+                                           GAsyncResult *res,
++    static void register_native_menubar_cb(GObject* source_object,
++                                           GAsyncResult* res,
 +                                           gpointer user_data);
-+    static gboolean map_event_cb(GtkWidget *widget, GdkEvent *event,
++    static gboolean map_event_cb(GtkWidget* widget, GdkEvent* event,
 +                                 gpointer user_data);
 +    void OnNameOwnerChanged();
-+    void OnProxyCreated(GDBusProxy *aProxy);
-+    void OnNativeMenuBarRegistered(nsMenuBar *aMenuBar,
++    void OnProxyCreated(GDBusProxy* aProxy);
++    void OnNativeMenuBarRegistered(nsMenuBar* aMenuBar,
 +                                   bool aSuccess);
-+    static void PrefChangedCallback(const char *aPref, void *aClosure);
++    static void PrefChangedCallback(const char* aPref, void* aClosure);
 +    void PrefChanged();
 +
-+    GCancellable *mCreateProxyCancellable;
-+    GDBusProxy *mDbusProxy;
++    GCancellable* mCreateProxyCancellable;
++    GDBusProxy* mDbusProxy;
 +    bool mOnline;
-+    nsTArray<nsMenuBar *> mMenuBars;
++    nsTArray<nsMenuBar*> mMenuBars;
 +    nsTHashMap<nsPtrHashKey<nsMenuBar>, GCancellable*> mMenuBarRegistrationCancellables;
 +
 +    static bool sShutdown;
-+    static nsNativeMenuService *sService;
++    static nsNativeMenuService* sService;
 +};
 +
 +#endif /* __nsNativeMenuService_h__ */
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -7304,6 +7304,10 @@ void nsWindow::HideWindowChrome(bool aSh
+@@ -7407,6 +7407,10 @@ void nsWindow::HideWindowChrome(bool aSh
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -5028,7 +5028,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -970,6 +974,8 @@ class nsWindow final : public nsBaseWidg
+@@ -979,6 +983,8 @@ class nsWindow final : public nsBaseWidg
  
    static bool sTransparentMainWindow;
  
@@ -5147,7 +5147,7 @@
 +#endif  // mozilla_widget_NativeMenuSupport_h
 --- a/widget/moz.build
 +++ b/widget/moz.build
-@@ -170,6 +170,11 @@ EXPORTS += [
+@@ -177,6 +177,11 @@ EXPORTS += [
      "PuppetWidget.h",
  ]
  
