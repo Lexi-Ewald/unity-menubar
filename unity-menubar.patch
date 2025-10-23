@@ -3015,7 +3015,7 @@
 +            return;
 +        }
 +
-+        loader->LoadImage(uri, nullptr, nullptr,
++        (void)loader->LoadImage(uri, nullptr, nullptr,
 +                          nullptr, 0, loadGroup, this, nullptr, nullptr,
 +                          nsIRequest::LOAD_NORMAL, nullptr,
 +                          nsIContentPolicy::TYPE_IMAGE, EmptyString(),
