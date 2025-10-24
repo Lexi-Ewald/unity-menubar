@@ -4688,7 +4688,7 @@
 +#endif /* __nsNativeMenuService_h__ */
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -7440,6 +7440,10 @@ void nsWindow::HideWindowChrome(bool aSh
+@@ -7406,6 +7406,10 @@ void nsWindow::HideWindowChrome(bool aSh
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -4710,7 +4710,7 @@
  #ifdef ACCESSIBILITY
  #  include "mozilla/a11y/LocalAccessible.h"
  #endif
-@@ -246,6 +248,8 @@ class nsWindow final : public nsBaseWidg
+@@ -245,6 +247,8 @@ class nsWindow final : public nsBaseWidg
    nsresult MakeFullScreen(bool aFullScreen) override;
    void HideWindowChrome(bool aShouldHide) override;
  
@@ -4750,7 +4750,7 @@
  
  # Static atom definitions, used to generate nsGkAtomList.h.
  #
-@@ -2611,7 +2612,7 @@ STATIC_ATOMS = [
+@@ -2620,7 +2621,7 @@ STATIC_ATOMS = [
      InheritingAnonBoxAtom("AnonBox_mozSVGForeignContent", ":-moz-svg-foreign-content"),
      InheritingAnonBoxAtom("AnonBox_mozSVGText", ":-moz-svg-text"),
      # END ATOMS
@@ -4837,7 +4837,7 @@
 +#endif  // mozilla_widget_NativeMenuSupport_h
 --- a/widget/moz.build
 +++ b/widget/moz.build
-@@ -177,6 +177,11 @@ EXPORTS += [
+@@ -176,6 +176,11 @@ EXPORTS += [
      "PuppetWidget.h",
  ]
  
