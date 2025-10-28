@@ -175,7 +175,7 @@
 +}
 --- /dev/null
 +++ b/widget/gtk/nsDbusmenu.h
-@@ -0,0 +1,98 @@
+@@ -0,0 +1,94 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -213,10 +213,7 @@
 +typedef struct _DbusmenuMenuitem DbusmenuMenuitem;
 +typedef struct _DbusmenuServer DbusmenuServer;
 +
-+enum DbusmenuStatus {
-+    DBUSMENU_STATUS_NORMAL,
-+    DBUSMENU_STATUS_NOTICE
-+};
++enum DbusmenuStatus { DBUSMENU_STATUS_NORMAL, DBUSMENU_STATUS_NOTICE };
 +
 +#define DBUSMENU_MENUITEM_CHILD_DISPLAY_SUBMENU "submenu"
 +#define DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY "children-display"
@@ -237,9 +234,8 @@
 +#define DBUSMENU_MENUITEM_TOGGLE_STATE_UNCHECKED 0
 +#define DBUSMENU_SERVER_PROP_DBUS_OBJECT "dbus-object"
 +
-+class nsDbusmenuFunctions
-+{
-+public:
++class nsDbusmenuFunctions {
++ public:
 +    nsDbusmenuFunctions() = delete;
 +
 +    static nsresult Init();
@@ -4688,7 +4684,7 @@
 +#endif /* __nsNativeMenuService_h__ */
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -7406,6 +7406,10 @@ void nsWindow::HideWindowChrome(bool aSh
+@@ -7404,6 +7404,10 @@ void nsWindow::HideWindowChrome(bool aSh
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -4750,7 +4746,7 @@
  
  # Static atom definitions, used to generate nsGkAtomList.h.
  #
-@@ -2620,7 +2621,7 @@ STATIC_ATOMS = [
+@@ -2621,7 +2622,7 @@ STATIC_ATOMS = [
      InheritingAnonBoxAtom("AnonBox_mozSVGForeignContent", ":-moz-svg-foreign-content"),
      InheritingAnonBoxAtom("AnonBox_mozSVGText", ":-moz-svg-text"),
      # END ATOMS
