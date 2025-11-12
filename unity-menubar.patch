@@ -61,7 +61,7 @@
      "components.conf",
 --- a/modules/libpref/init/all.js
 +++ b/modules/libpref/init/all.js
-@@ -153,6 +153,9 @@ pref("dom.mouseevent.click.hack.use_lega
+@@ -149,6 +149,9 @@ pref("dom.mouseevent.click.hack.use_lega
  // Fastback caching - if this pref is negative, then we calculate the number
  // of content viewers to cache based on the amount of available memory.
  pref("browser.sessionhistory.max_total_viewers", -1);
@@ -175,7 +175,7 @@
 +}
 --- /dev/null
 +++ b/widget/gtk/nsDbusmenu.h
-@@ -0,0 +1,98 @@
+@@ -0,0 +1,94 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -213,10 +213,7 @@
 +typedef struct _DbusmenuMenuitem DbusmenuMenuitem;
 +typedef struct _DbusmenuServer DbusmenuServer;
 +
-+enum DbusmenuStatus {
-+    DBUSMENU_STATUS_NORMAL,
-+    DBUSMENU_STATUS_NOTICE
-+};
++enum DbusmenuStatus { DBUSMENU_STATUS_NORMAL, DBUSMENU_STATUS_NOTICE };
 +
 +#define DBUSMENU_MENUITEM_CHILD_DISPLAY_SUBMENU "submenu"
 +#define DBUSMENU_MENUITEM_PROP_CHILD_DISPLAY "children-display"
@@ -237,9 +234,8 @@
 +#define DBUSMENU_MENUITEM_TOGGLE_STATE_UNCHECKED 0
 +#define DBUSMENU_SERVER_PROP_DBUS_OBJECT "dbus-object"
 +
-+class nsDbusmenuFunctions
-+{
-+public:
++class nsDbusmenuFunctions {
++ public:
 +    nsDbusmenuFunctions() = delete;
 +
 +    static nsresult Init();
@@ -4688,7 +4684,7 @@
 +#endif /* __nsNativeMenuService_h__ */
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -7419,6 +7419,10 @@ void nsWindow::HideWindowChrome(bool aSh
+@@ -7429,6 +7429,10 @@ void nsWindow::HideWindowChrome(bool aSh
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -4719,7 +4715,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -981,6 +985,8 @@ class nsWindow final : public nsBaseWidg
+@@ -979,6 +983,8 @@ class nsWindow final : public nsBaseWidg
  
    static bool sTransparentMainWindow;
  
@@ -4750,7 +4746,7 @@
  
  # Static atom definitions, used to generate nsGkAtomList.h.
  #
-@@ -2607,7 +2608,7 @@ STATIC_ATOMS = [
+@@ -2612,7 +2613,7 @@ STATIC_ATOMS = [
      InheritingAnonBoxAtom("AnonBox_mozSVGForeignContent", ":-moz-svg-foreign-content"),
      InheritingAnonBoxAtom("AnonBox_mozSVGText", ":-moz-svg-text"),
      # END ATOMS
@@ -4758,7 +4754,7 @@
 +] + HTML_PARSER_ATOMS + NATIVE_MENU_ATOMS
  # fmt: on
  
- 
+
 --- a/widget/gtk/components.conf
 +++ b/widget/gtk/components.conf
 @@ -115,6 +115,14 @@ Classes = [
