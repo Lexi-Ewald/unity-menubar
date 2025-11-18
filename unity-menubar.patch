@@ -122,7 +122,7 @@
 +
 +#include "nsDbusmenu.h"
 +#include "prlink.h"
-+#include "mozilla/ArrayUtils.h"
++#include "nsThreadUtils.h"
 +
 +#define FUNC(name, type, params) \
 +nsDbusmenuFunctions::_##name##_fn nsDbusmenuFunctions::s_##name;
