@@ -11,7 +11,7 @@
            <menupopup id="organizeButtonPopup">
 --- a/dom/xul/XULPopupElement.cpp
 +++ b/dom/xul/XULPopupElement.cpp
-@@ -239,6 +239,10 @@ void XULPopupElement::GetState(nsString&
+@@ -238,6 +238,10 @@ void XULPopupElement::GetState(nsString&
    // set this here in case there's no frame for the popup
    aState.AssignLiteral("closed");
  
@@ -22,7 +22,7 @@
    if (nsXULPopupManager* pm = nsXULPopupManager::GetInstance()) {
      switch (pm->GetPopupState(this)) {
        case ePopupShown:
-@@ -261,6 +265,11 @@ void XULPopupElement::GetState(nsString&
+@@ -260,6 +264,11 @@ void XULPopupElement::GetState(nsString&
          break;
      }
    }
@@ -4684,7 +4684,7 @@
 +#endif /* __nsNativeMenuService_h__ */
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -7429,6 +7429,10 @@ void nsWindow::HideWindowChrome(bool aSh
+@@ -7644,6 +7644,10 @@ void nsWindow::HideWindowChrome(bool aSh
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -4706,7 +4706,7 @@
  #ifdef ACCESSIBILITY
  #  include "mozilla/a11y/LocalAccessible.h"
  #endif
-@@ -246,6 +248,8 @@ class nsWindow final : public nsBaseWidg
+@@ -251,6 +253,8 @@ class nsWindow final : public nsBaseWidg
    nsresult MakeFullScreen(bool aFullScreen) override;
    void HideWindowChrome(bool aShouldHide) override;
  
@@ -4715,7 +4715,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -979,6 +983,8 @@ class nsWindow final : public nsBaseWidg
+@@ -1019,6 +1023,8 @@ class nsWindow final : public nsBaseWidg
  
    static bool sTransparentMainWindow;
  
@@ -4746,7 +4746,7 @@
  
  # Static atom definitions, used to generate nsGkAtomList.h.
  #
-@@ -2612,7 +2613,7 @@ STATIC_ATOMS = [
+@@ -2622,7 +2623,7 @@ STATIC_ATOMS = [
      InheritingAnonBoxAtom("AnonBox_mozSVGForeignContent", ":-moz-svg-foreign-content"),
      InheritingAnonBoxAtom("AnonBox_mozSVGText", ":-moz-svg-text"),
      # END ATOMS
@@ -4754,7 +4754,7 @@
 +] + HTML_PARSER_ATOMS + NATIVE_MENU_ATOMS
  # fmt: on
  
-
+ 
 --- a/widget/gtk/components.conf
 +++ b/widget/gtk/components.conf
 @@ -115,6 +115,14 @@ Classes = [
@@ -4833,7 +4833,7 @@
 +#endif  // mozilla_widget_NativeMenuSupport_h
 --- a/widget/moz.build
 +++ b/widget/moz.build
-@@ -177,6 +177,11 @@ EXPORTS += [
+@@ -176,6 +176,11 @@ EXPORTS += [
      "PuppetWidget.h",
  ]
  
