@@ -11,7 +11,7 @@
            <menupopup id="organizeButtonPopup">
 --- a/dom/xul/XULPopupElement.cpp
 +++ b/dom/xul/XULPopupElement.cpp
-@@ -239,6 +239,10 @@ void XULPopupElement::GetState(nsString&
+@@ -238,6 +238,10 @@ void XULPopupElement::GetState(nsString&
    // set this here in case there's no frame for the popup
    aState.AssignLiteral("closed");
  
@@ -22,7 +22,7 @@
    if (nsXULPopupManager* pm = nsXULPopupManager::GetInstance()) {
      switch (pm->GetPopupState(this)) {
        case ePopupShown:
-@@ -261,6 +265,11 @@ void XULPopupElement::GetState(nsString&
+@@ -260,6 +264,11 @@ void XULPopupElement::GetState(nsString&
          break;
      }
    }
@@ -48,7 +48,7 @@
  FINAL_LIBRARY = "xul"
 --- a/layout/build/moz.build
 +++ b/layout/build/moz.build
-@@ -68,6 +68,10 @@ elif CONFIG["MOZ_WIDGET_TOOLKIT"] == "an
+@@ -67,6 +67,10 @@ elif CONFIG["MOZ_WIDGET_TOOLKIT"] == "an
          "/dom/system",
          "/dom/system/android",
      ]
@@ -89,7 +89,7 @@
  }
 --- a/widget/gtk/moz.build
 +++ b/widget/gtk/moz.build
-@@ -107,6 +107,15 @@ UNIFIED_SOURCES += [
+@@ -108,6 +108,15 @@ UNIFIED_SOURCES += [
  
  SOURCES += [
      "MediaKeysEventSourceFactory.cpp",
@@ -105,7 +105,7 @@
      "nsNativeThemeGTK.cpp",  # conflicts with X11 headers
      "nsWindow.cpp",  # conflicts with X11 headers
      "WaylandVsyncSource.cpp",  # conflicts with X11 headers
-@@ -158,6 +167,7 @@ LOCAL_INCLUDES += [
+@@ -159,6 +168,7 @@ LOCAL_INCLUDES += [
      "/layout/base",
      "/layout/forms",
      "/layout/generic",
@@ -2020,7 +2020,7 @@
 +static struct KeyCodeData gKeyCodes[] = {
 +#define NS_DEFINE_VK(aDOMKeyName, aDOMKeyCode) \
 +  { #aDOMKeyName, sizeof(#aDOMKeyName) - 1, aDOMKeyCode },
-+#include "mozilla/VirtualKeyCodeList.h"
++#include "mozilla/VirtualKeyCodeList.inc"
 +#undef NS_DEFINE_VK
 +  { nullptr, 0, 0 }
 +};
@@ -4684,7 +4684,7 @@
 +#endif /* __nsNativeMenuService_h__ */
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -7404,6 +7404,10 @@ void nsWindow::HideWindowChrome(bool aSh
+@@ -7552,6 +7552,10 @@ void nsWindow::HideWindowChrome(bool aSh
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -4706,7 +4706,7 @@
  #ifdef ACCESSIBILITY
  #  include "mozilla/a11y/LocalAccessible.h"
  #endif
-@@ -245,6 +247,8 @@ class nsWindow final : public nsBaseWidg
+@@ -256,6 +258,8 @@ class nsWindow final : public nsBaseWidg
    nsresult MakeFullScreen(bool aFullScreen) override;
    void HideWindowChrome(bool aShouldHide) override;
  
@@ -4715,7 +4715,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -980,6 +984,8 @@ class nsWindow final : public nsBaseWidg
+@@ -1022,6 +1026,8 @@ class nsWindow final : public nsBaseWidg
  
    static bool sTransparentMainWindow;
  
@@ -4746,7 +4746,7 @@
  
  # Static atom definitions, used to generate nsGkAtomList.h.
  #
-@@ -2621,7 +2622,7 @@ STATIC_ATOMS = [
+@@ -2631,7 +2632,7 @@ STATIC_ATOMS = [
      InheritingAnonBoxAtom("AnonBox_mozSVGForeignContent", ":-moz-svg-foreign-content"),
      InheritingAnonBoxAtom("AnonBox_mozSVGText", ":-moz-svg-text"),
      # END ATOMS
