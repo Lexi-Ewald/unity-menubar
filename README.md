@@ -11,6 +11,7 @@
 - [Waterfox project](https://github.com/MrAlex94/Waterfox/)
 - [Plasmafox Web-Browser](https://github.com/torvic9/plasmafox/)
 - [thunderbird-globalmenu](https://aur.archlinux.org/packages/thunderbird-globalmenu)
+- [firefox-globalmenu](https://aur.archlinux.org/packages/firefox-globalmenu)
 - [Betterbird](https://github.com/Betterbird)
   
 **Notes:**
