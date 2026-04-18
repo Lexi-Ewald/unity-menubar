@@ -1,5 +1,6 @@
 ## Unity Menubar
 ### for Firefox and Thunderbird with global menu
+### This patch is for developers in Firefox Trunk.
 
 **Histroy**
 - The unity-menubar.patch is the main build resource for the firefox and thunderbird global menu.
@@ -11,6 +12,7 @@
 - [Waterfox project](https://github.com/MrAlex94/Waterfox/)
 - [Plasmafox Web-Browser](https://github.com/torvic9/plasmafox/)
 - [thunderbird-globalmenu](https://aur.archlinux.org/packages/thunderbird-globalmenu)
+- [firefox-globalmenu](https://aur.archlinux.org/packages/firefox-globalmenu)
 - [Betterbird](https://github.com/Betterbird)
   
 **Notes:**
