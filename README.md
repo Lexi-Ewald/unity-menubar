@@ -1,5 +1,6 @@
 ## Unity Menubar
 ### This patch is for developers in mozilla-central and comm-central.
+This industry section will be updated and adapted as changes occur during the development phase.
 
 **Histroy**
 - The unity-menubar.patch is the main build resource for the firefox and thunderbird global menu.
