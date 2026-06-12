@@ -11,7 +11,7 @@
            <menupopup id="organizeButtonPopup">
 --- a/dom/xul/XULPopupElement.cpp
 +++ b/dom/xul/XULPopupElement.cpp
-@@ -235,6 +235,10 @@ void XULPopupElement::GetState(nsString&
+@@ -245,6 +245,10 @@ void XULPopupElement::GetState(nsString&
    // set this here in case there's no frame for the popup
    aState.AssignLiteral("closed");
  
@@ -22,7 +22,7 @@
    if (nsXULPopupManager* pm = nsXULPopupManager::GetInstance()) {
      switch (pm->GetPopupState(this)) {
        case ePopupShown:
-@@ -257,6 +261,11 @@ void XULPopupElement::GetState(nsString&
+@@ -267,6 +271,11 @@ void XULPopupElement::GetState(nsString&
          break;
      }
    }
@@ -89,7 +89,7 @@
  }
 --- a/widget/gtk/moz.build
 +++ b/widget/gtk/moz.build
-@@ -106,6 +106,15 @@
+@@ -111,6 +111,15 @@
  
  SOURCES += [
      "MediaKeysEventSourceFactory.cpp",
@@ -105,7 +105,7 @@
      "nsNativeThemeGTK.cpp",  # conflicts with X11 headers
      "nsWindow.cpp",  # conflicts with X11 headers
  ]
-@@ -163,6 +172,7 @@
+@@ -168,6 +177,7 @@
      "/layout/base",
      "/layout/forms",
      "/layout/generic",
@@ -4554,7 +4554,7 @@
 +#endif  // nsNativeMenuService_h_
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -5390,6 +5390,10 @@
+@@ -5403,6 +5403,10 @@
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -4585,7 +4585,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -857,6 +861,8 @@
+@@ -866,6 +870,8 @@
  
    static bool sTransparentMainWindow;
  
@@ -4616,7 +4616,7 @@
  
  # Static atom definitions, used to generate nsGkAtomList.h.
  #
-@@ -2636,7 +2637,7 @@
+@@ -2644,7 +2645,7 @@
      Atom("PseudoStyle_MozSvgText", ":-moz-svg-text"),
      Atom("PseudoStyle_WebkitScrollbar", ":-webkit-scrollbar"),
      # END ATOMS
@@ -4675,8 +4675,8 @@
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
-+#ifndef mozilla_widget_NativeMenuSupport_h_
-+#define mozilla_widget_NativeMenuSupport_h_
++#ifndef mozilla_widget_NativeMenuSupport_h
++#define mozilla_widget_NativeMenuSupport_h
 +
 +class nsIWidget;
 +
@@ -4700,7 +4700,7 @@
 +}  // namespace widget
 +}  // namespace mozilla
 +
-+#endif  // mozilla_widget_NativeMenuSupport_h_
++#endif  // mozilla_widget_NativeMenuSupport_h
 --- a/widget/moz.build
 +++ b/widget/moz.build
 @@ -174,6 +174,11 @@ EXPORTS += [
@@ -4736,7 +4736,7 @@
 +}  // namespace mozilla
 +
 +// {90DF88F9-F084-4EF3-829A-49496E636DED}
-+#define NS_INATIVEMENUSERVICE_IID  \
++#define NS_INATIVEMENUSERVICE_IID \
 +  {0x90DF88F9, 0xF084, 0x4EF3, {0x82, 0x9A, 0x49, 0x49, 0x6E, 0x63, 0x6D, 0xED}}
 +
 +class nsINativeMenuService : public nsISupports {
