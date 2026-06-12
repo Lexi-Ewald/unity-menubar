@@ -11,7 +11,7 @@
            <menupopup id="organizeButtonPopup">
 --- a/dom/xul/XULPopupElement.cpp
 +++ b/dom/xul/XULPopupElement.cpp
-@@ -235,6 +235,10 @@ void XULPopupElement::GetState(nsString&
+@@ -245,6 +245,10 @@ void XULPopupElement::GetState(nsString&
    // set this here in case there's no frame for the popup
    aState.AssignLiteral("closed");
  
@@ -22,7 +22,7 @@
    if (nsXULPopupManager* pm = nsXULPopupManager::GetInstance()) {
      switch (pm->GetPopupState(this)) {
        case ePopupShown:
-@@ -257,6 +261,11 @@ void XULPopupElement::GetState(nsString&
+@@ -267,6 +271,11 @@ void XULPopupElement::GetState(nsString&
          break;
      }
    }
@@ -89,7 +89,7 @@
  }
 --- a/widget/gtk/moz.build
 +++ b/widget/gtk/moz.build
-@@ -106,6 +106,15 @@
+@@ -111,6 +111,15 @@
  
  SOURCES += [
      "MediaKeysEventSourceFactory.cpp",
@@ -105,7 +105,7 @@
      "nsNativeThemeGTK.cpp",  # conflicts with X11 headers
      "nsWindow.cpp",  # conflicts with X11 headers
  ]
-@@ -163,6 +172,7 @@
+@@ -168,6 +177,7 @@
      "/layout/base",
      "/layout/forms",
      "/layout/generic",
@@ -4554,7 +4554,7 @@
 +#endif  // nsNativeMenuService_h_
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -5390,6 +5390,10 @@
+@@ -5403,6 +5403,10 @@
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -4585,7 +4585,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -857,6 +861,8 @@
+@@ -866,6 +870,8 @@
  
    static bool sTransparentMainWindow;
  
@@ -4616,7 +4616,7 @@
  
  # Static atom definitions, used to generate nsGkAtomList.h.
  #
-@@ -2635,7 +2636,7 @@
+@@ -2643,7 +2644,7 @@
      Atom("PseudoStyle_MozSvgText", ":-moz-svg-text"),
      Atom("PseudoStyle_WebkitScrollbar", ":-webkit-scrollbar"),
      # END ATOMS
