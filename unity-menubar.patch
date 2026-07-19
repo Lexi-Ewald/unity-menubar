@@ -89,7 +89,7 @@
  }
 --- a/widget/gtk/moz.build
 +++ b/widget/gtk/moz.build
-@@ -111,6 +111,15 @@
+@@ -112,6 +112,15 @@
  
  SOURCES += [
      "MediaKeysEventSourceFactory.cpp",
@@ -105,7 +105,7 @@
      "nsNativeThemeGTK.cpp",  # conflicts with X11 headers
      "nsWindow.cpp",  # conflicts with X11 headers
  ]
-@@ -168,6 +177,7 @@
+@@ -171,6 +180,7 @@
      "/layout/base",
      "/layout/forms",
      "/layout/generic",
@@ -4554,7 +4554,7 @@
 +#endif  // nsNativeMenuService_h_
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -5403,6 +5403,10 @@
+@@ -5417,6 +5417,10 @@
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -4568,15 +4568,15 @@
 --- a/widget/gtk/nsWindow.h
 +++ b/widget/gtk/nsWindow.h
 @@ -27,6 +27,8 @@
- #include "IMContextWrapper.h"
- #include "LookAndFeel.h"
+ #include "nsIWidget.h"
+ #include "nsRefPtrHashtable.h"
  
 +#include "nsMenuBar.h"
 +
  #ifdef ACCESSIBILITY
  #  include "mozilla/a11y/LocalAccessible.h"
  #endif
-@@ -280,6 +282,8 @@
+@@ -272,6 +274,8 @@
    nsresult MakeFullScreen(bool aFullScreen) override;
    void HideWindowChrome(bool aShouldHide) override;
  
@@ -4585,7 +4585,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -866,6 +870,8 @@
+@@ -854,6 +858,8 @@
  
    static bool sTransparentMainWindow;
  
@@ -4614,9 +4614,9 @@
  from HTMLAtoms import HTML_PARSER_ATOMS
 +from NativeMenuAtoms import NATIVE_MENU_ATOMS
  
- # Static atom definitions, used to generate nsGkAtomList.h.
+ # Static atom definitions, used to generate various files below.
  #
-@@ -2644,7 +2645,7 @@
+@@ -2660,7 +2661,7 @@
      Atom("PseudoStyle_MozSvgText", ":-moz-svg-text"),
      Atom("PseudoStyle_WebkitScrollbar", ":-webkit-scrollbar"),
      # END ATOMS
@@ -4646,7 +4646,7 @@
 +++ b/widget/gtk/NativeMenuSupport.cpp
 @@ -9,6 +9,8 @@
  #include "NativeMenuGtk.h"
- #include "DBusMenu.h"
+ #include "mozilla/StaticPrefs_widget.h"
  #include "nsWindow.h"
 +#include "nsINativeMenuService.h"
 +#include "nsServiceManagerUtils.h"
@@ -4675,8 +4675,8 @@
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
-+#ifndef mozilla_widget_NativeMenuSupport_h
-+#define mozilla_widget_NativeMenuSupport_h
++#ifndef mozilla_widget_NativeMenuSupport_h_
++#define mozilla_widget_NativeMenuSupport_h_
 +
 +class nsIWidget;
 +
@@ -4700,7 +4700,7 @@
 +}  // namespace widget
 +}  // namespace mozilla
 +
-+#endif  // mozilla_widget_NativeMenuSupport_h
++#endif  // mozilla_widget_NativeMenuSupport_h_
 --- a/widget/moz.build
 +++ b/widget/moz.build
 @@ -174,6 +174,11 @@ EXPORTS += [
