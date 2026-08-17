@@ -73,7 +73,7 @@
  pref("browser.send_pings", false);
 --- a/toolkit/content/xul.css
 +++ b/toolkit/content/xul.css
-@@ -326,6 +326,13 @@ toolbox {
+@@ -310,6 +310,13 @@ toolbox {
    }
  }
  
@@ -4554,7 +4554,7 @@
 +#endif  // nsNativeMenuService_h_
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -5416,6 +5416,10 @@
+@@ -5417,6 +5417,10 @@
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -4568,15 +4568,15 @@
 --- a/widget/gtk/nsWindow.h
 +++ b/widget/gtk/nsWindow.h
 @@ -27,6 +27,8 @@
- #include "IMContextWrapper.h"
- #include "LookAndFeel.h"
+ #include "nsIWidget.h"
+ #include "nsRefPtrHashtable.h"
  
 +#include "nsMenuBar.h"
 +
  #ifdef ACCESSIBILITY
  #  include "mozilla/a11y/LocalAccessible.h"
  #endif
-@@ -273,6 +275,8 @@
+@@ -274,6 +276,8 @@
    nsresult MakeFullScreen(bool aFullScreen) override;
    void HideWindowChrome(bool aShouldHide) override;
  
@@ -4585,7 +4585,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -855,6 +859,8 @@
+@@ -856,6 +860,8 @@
  
    static bool sTransparentMainWindow;
  
@@ -4614,9 +4614,9 @@
  from HTMLAtoms import HTML_PARSER_ATOMS
 +from NativeMenuAtoms import NATIVE_MENU_ATOMS
  
- # Static atom definitions, used to generate nsGkAtomList.h.
+ # Static atom definitions, used to generate various files below.
  #
-@@ -2660,7 +2661,7 @@
+@@ -2661,7 +2662,7 @@
      Atom("PseudoStyle_MozSvgText", ":-moz-svg-text"),
      Atom("PseudoStyle_WebkitScrollbar", ":-webkit-scrollbar"),
      # END ATOMS
@@ -4646,7 +4646,7 @@
 +++ b/widget/gtk/NativeMenuSupport.cpp
 @@ -9,6 +9,8 @@
  #include "NativeMenuGtk.h"
- #include "DBusMenu.h"
+ #include "mozilla/StaticPrefs_widget.h"
  #include "nsWindow.h"
 +#include "nsINativeMenuService.h"
 +#include "nsServiceManagerUtils.h"
