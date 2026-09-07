@@ -61,7 +61,7 @@
      "components.conf",
 --- a/modules/libpref/init/all.js
 +++ b/modules/libpref/init/all.js
-@@ -164,6 +164,9 @@ pref("dom.mouseevent.click.hack.use_lega
+@@ -172,6 +172,9 @@ pref("dom.mouseevent.click.hack.use_lega
  // Fastback caching - if this pref is negative, then we calculate the number
  // of content viewers to cache based on the amount of available memory.
  pref("browser.sessionhistory.max_total_viewers", -1);
@@ -73,7 +73,7 @@
  pref("browser.send_pings", false);
 --- a/toolkit/content/xul.css
 +++ b/toolkit/content/xul.css
-@@ -326,6 +326,13 @@ toolbox {
+@@ -310,6 +310,13 @@ toolbox {
    }
  }
  
@@ -89,7 +89,7 @@
  }
 --- a/widget/gtk/moz.build
 +++ b/widget/gtk/moz.build
-@@ -112,6 +112,15 @@
+@@ -105,6 +105,15 @@
  
  SOURCES += [
      "MediaKeysEventSourceFactory.cpp",
@@ -105,7 +105,7 @@
      "nsNativeThemeGTK.cpp",  # conflicts with X11 headers
      "nsWindow.cpp",  # conflicts with X11 headers
  ]
-@@ -171,6 +180,7 @@
+@@ -165,6 +174,7 @@
      "/layout/base",
      "/layout/forms",
      "/layout/generic",
@@ -115,14 +115,15 @@
      "/third_party/cups/include",
 --- /dev/null
 +++ b/widget/gtk/nsDbusmenu.cpp
-@@ -0,0 +1,55 @@
+@@ -0,0 +1,56 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
 +#include "nsDbusmenu.h"
-+#include "prlink.h"
++
 +#include "nsThreadUtils.h"
++#include "prlink.h"
 +
 +#define FUNC(name, type, params) \
 +  nsDbusmenuFunctions::_##name##_fn nsDbusmenuFunctions::s_##name;
@@ -181,10 +182,10 @@
 +#ifndef nsDbusmenu_h_
 +#define nsDbusmenu_h_
 +
-+#include "nsError.h"
-+
-+#include <glib.h>
 +#include <gdk/gdk.h>
++#include <glib.h>
++
++#include "nsError.h"
 +
 +#define DBUSMENU_GLIB_FUNCTIONS                                              \
 +  FUNC(dbusmenu_menuitem_child_add_position, gboolean,                       \
@@ -299,39 +300,38 @@
 +#endif  //  nsDbusmenu_h_
 --- /dev/null
 +++ b/widget/gtk/nsMenu.cpp
-@@ -0,0 +1,696 @@
+@@ -0,0 +1,695 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
 +#define _IMPL_NS_LAYOUT
 +
-+#include "mozilla/dom/Document.h"
-+#include "mozilla/dom/Element.h"
++#include "nsMenu.h"
++
++#include <glib-object.h>
++
 +#include "mozilla/Assertions.h"
 +#include "mozilla/ComputedStyleInlines.h"
 +#include "mozilla/EventDispatcher.h"
 +#include "mozilla/MouseEvents.h"
 +#include "mozilla/PresShell.h"
 +#include "mozilla/PresShellInlines.h"
++#include "mozilla/dom/Document.h"
++#include "mozilla/dom/Element.h"
++#include "nsAtom.h"
++#include "nsCSSValue.h"
 +#include "nsComponentManagerUtils.h"
 +#include "nsContentUtils.h"
-+#include "nsCSSValue.h"
 +#include "nsGkAtoms.h"
 +#include "nsGtkUtils.h"
-+#include "nsAtom.h"
 +#include "nsIContent.h"
 +#include "nsIRunnable.h"
 +#include "nsITimer.h"
++#include "nsNativeMenuDocListener.h"
 +#include "nsString.h"
 +#include "nsStyleStruct.h"
 +#include "nsThreadUtils.h"
-+
-+#include "nsNativeMenuDocListener.h"
-+
-+#include <glib-object.h>
-+
-+#include "nsMenu.h"
 +
 +using namespace mozilla;
 +
@@ -998,7 +998,7 @@
 +}
 --- /dev/null
 +++ b/widget/gtk/nsMenu.h
-@@ -0,0 +1,114 @@
+@@ -0,0 +1,113 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -1006,14 +1006,13 @@
 +#ifndef nsMenu_h_
 +#define nsMenu_h_
 +
++#include <glib.h>
++
 +#include "mozilla/UniquePtr.h"
 +#include "nsCOMPtr.h"
-+
 +#include "nsDbusmenu.h"
 +#include "nsMenuContainer.h"
 +#include "nsMenuObject.h"
-+
-+#include <glib.h>
 +
 +class nsAtom;
 +class nsIContent;
@@ -1115,34 +1114,35 @@
 +#endif  //  nsMenu_h_
 --- /dev/null
 +++ b/widget/gtk/nsMenuBar.cpp
-@@ -0,0 +1,467 @@
+@@ -0,0 +1,468 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
 +#include "mozilla/Assertions.h"
++#include "mozilla/Preferences.h"
 +#include "mozilla/dom/Document.h"
 +#include "mozilla/dom/Element.h"
 +#include "mozilla/dom/Event.h"
 +#include "mozilla/dom/KeyboardEvent.h"
 +#include "mozilla/dom/KeyboardEventBinding.h"
-+#include "mozilla/Preferences.h"
 +#include "nsContentUtils.h"
 +#include "nsIDOMEventListener.h"
 +#include "nsIRunnable.h"
 +#include "nsIWidget.h"
++#include "nsMenu.h"
++#include "nsNativeMenuService.h"
 +#include "nsTArray.h"
 +#include "nsUnicharUtils.h"
 +
-+#include "nsMenu.h"
-+#include "nsNativeMenuService.h"
-+
++// clang-format off
 +#include <gdk/gdk.h>
 +#include <gdk/gdkx.h>
-+#include <glib.h>
 +#include <glib-object.h>
++#include <glib.h>
 +
 +#include "nsMenuBar.h"
++// clang-format on
 +
 +using namespace mozilla;
 +
@@ -1585,7 +1585,7 @@
 +}
 --- /dev/null
 +++ b/widget/gtk/nsMenuBar.h
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,104 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -1593,15 +1593,14 @@
 +#ifndef nsMenuBar_h_
 +#define nsMenuBar_h_
 +
++#include <gtk/gtk.h>
++
 +#include "mozilla/UniquePtr.h"
 +#include "nsCOMPtr.h"
-+#include "nsString.h"
-+
 +#include "nsDbusmenu.h"
 +#include "nsMenuContainer.h"
 +#include "nsMenuObject.h"
-+
-+#include <gtk/gtk.h>
++#include "nsString.h"
 +
 +class nsIContent;
 +class nsIWidget;
@@ -1693,20 +1692,19 @@
 +#endif  //  nsMenuBar_h_
 --- /dev/null
 +++ b/widget/gtk/nsMenuContainer.cpp
-@@ -0,0 +1,136 @@
+@@ -0,0 +1,135 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
-+#include "nsGkAtoms.h"
-+#include "nsIContent.h"
++#include "nsMenuContainer.h"
 +
 +#include "nsDbusmenu.h"
++#include "nsGkAtoms.h"
++#include "nsIContent.h"
 +#include "nsMenu.h"
 +#include "nsMenuItem.h"
 +#include "nsMenuSeparator.h"
-+
-+#include "nsMenuContainer.h"
 +
 +using namespace mozilla;
 +
@@ -1832,7 +1830,7 @@
 +}
 --- /dev/null
 +++ b/widget/gtk/nsMenuContainer.h
-@@ -0,0 +1,65 @@
+@@ -0,0 +1,64 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -1841,9 +1839,8 @@
 +#define nsMenuContainer_h_
 +
 +#include "mozilla/UniquePtr.h"
-+#include "nsTArray.h"
-+
 +#include "nsMenuObject.h"
++#include "nsTArray.h"
 +
 +class nsIContent;
 +class nsNativeMenuDocListener;
@@ -1900,42 +1897,43 @@
 +#endif  //  nsMenuContainer_h_
 --- /dev/null
 +++ b/widget/gtk/nsMenuItem.cpp
-@@ -0,0 +1,747 @@
+@@ -0,0 +1,748 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
 +#include "mozilla/Assertions.h"
++#include "mozilla/Preferences.h"
++#include "mozilla/TextEvents.h"
 +#include "mozilla/dom/Document.h"
 +#include "mozilla/dom/Element.h"
 +#include "mozilla/dom/KeyboardEventBinding.h"
 +#include "mozilla/dom/XULCommandEvent.h"
-+#include "mozilla/Preferences.h"
-+#include "mozilla/TextEvents.h"
-+#include "nsContentUtils.h"
 +#include "nsCRT.h"
++#include "nsContentUtils.h"
 +#include "nsGkAtoms.h"
 +#include "nsGlobalWindowInner.h"
 +#include "nsGtkUtils.h"
 +#include "nsIContent.h"
 +#include "nsIRunnable.h"
++#include "nsMenu.h"
++#include "nsMenuBar.h"
++#include "nsMenuContainer.h"
++#include "nsNativeMenuDocListener.h"
 +#include "nsQueryObject.h"
 +#include "nsReadableUtils.h"
 +#include "nsString.h"
 +#include "nsThreadUtils.h"
 +
-+#include "nsMenu.h"
-+#include "nsMenuBar.h"
-+#include "nsMenuContainer.h"
-+#include "nsNativeMenuDocListener.h"
-+
++// clang-format off
 +#include <gdk/gdk.h>
-+#include <gdk/gdkkeysyms.h>
 +#include <gdk/gdkkeysyms-compat.h>
++#include <gdk/gdkkeysyms.h>
 +#include <gdk/gdkx.h>
 +#include <gtk/gtk.h>
 +
 +#include "nsMenuItem.h"
++// clang-format on
 +
 +using namespace mozilla;
 +
@@ -2650,7 +2648,7 @@
 +nsMenuObject::EType nsMenuItem::Type() const { return eType_MenuItem; }
 --- /dev/null
 +++ b/widget/gtk/nsMenuItem.h
-@@ -0,0 +1,72 @@
+@@ -0,0 +1,71 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -2658,12 +2656,11 @@
 +#ifndef nsMenuItem_h_
 +#define nsMenuItem_h_
 +
-+#include "nsCOMPtr.h"
++#include <glib.h>
 +
++#include "nsCOMPtr.h"
 +#include "nsDbusmenu.h"
 +#include "nsMenuObject.h"
-+
-+#include <glib.h>
 +
 +class nsAtom;
 +class nsIContent;
@@ -2725,10 +2722,16 @@
 +#endif  //  nsMenuItem_h_
 --- /dev/null
 +++ b/widget/gtk/nsMenuObject.cpp
-@@ -0,0 +1,588 @@
+@@ -0,0 +1,587 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#include "nsMenuObject.h"
++
++#include <gdk/gdk.h>
++#include <glib-object.h>
++#include <pango/pango.h>
 +
 +#include "ImageOps.h"
 +#include "imgIContainer.h"
@@ -2736,12 +2739,12 @@
 +#include "imgLoader.h"
 +#include "imgRequestProxy.h"
 +#include "mozilla/Assertions.h"
-+#include "mozilla/dom/Document.h"
-+#include "mozilla/dom/Element.h"
++#include "mozilla/GRefPtr.h"
 +#include "mozilla/Preferences.h"
 +#include "mozilla/PresShell.h"
 +#include "mozilla/PresShellInlines.h"
-+#include "mozilla/GRefPtr.h"
++#include "mozilla/dom/Document.h"
++#include "mozilla/dom/Element.h"
 +#include "nsAttrValue.h"
 +#include "nsComputedDOMStyle.h"
 +#include "nsContentUtils.h"
@@ -2749,8 +2752,10 @@
 +#include "nsIContent.h"
 +#include "nsIContentPolicy.h"
 +#include "nsILoadGroup.h"
-+#include "nsImageToPixbuf.h"
 +#include "nsIURI.h"
++#include "nsImageToPixbuf.h"
++#include "nsMenuContainer.h"
++#include "nsNativeMenuDocListener.h"
 +#include "nsNetUtil.h"
 +#include "nsPresContext.h"
 +#include "nsRect.h"
@@ -2759,15 +2764,6 @@
 +#include "nsStyleConsts.h"
 +#include "nsStyleStruct.h"
 +#include "nsUnicharUtils.h"
-+
-+#include "nsMenuContainer.h"
-+#include "nsNativeMenuDocListener.h"
-+
-+#include <gdk/gdk.h>
-+#include <glib-object.h>
-+#include <pango/pango.h>
-+
-+#include "nsMenuObject.h"
 +
 +// X11's None clashes with StyleDisplay::None
 +#include "X11UndefineNone.h"
@@ -3316,7 +3312,7 @@
 +}
 --- /dev/null
 +++ b/widget/gtk/nsMenuObject.h
-@@ -0,0 +1,157 @@
+@@ -0,0 +1,156 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -3326,7 +3322,6 @@
 +
 +#include "mozilla/ComputedStyleInlines.h"
 +#include "nsCOMPtr.h"
-+
 +#include "nsDbusmenu.h"
 +#include "nsNativeMenuDocListener.h"
 +
@@ -3476,19 +3471,18 @@
 +#endif  //  nsMenuObject_h_
 --- /dev/null
 +++ b/widget/gtk/nsMenuSeparator.cpp
-@@ -0,0 +1,59 @@
+@@ -0,0 +1,58 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
++#include "nsMenuSeparator.h"
++
 +#include "mozilla/Assertions.h"
 +#include "nsCRT.h"
-+#include "nsGkAtoms.h"
-+
 +#include "nsDbusmenu.h"
-+
++#include "nsGkAtoms.h"
 +#include "nsMenuContainer.h"
-+#include "nsMenuSeparator.h"
 +
 +using namespace mozilla;
 +
@@ -3572,21 +3566,20 @@
 +#endif  //  nsMenuSeparator_h_
 --- /dev/null
 +++ b/widget/gtk/nsNativeMenuDocListener.cpp
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,312 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
++#include "nsNativeMenuDocListener.h"
++
 +#include "mozilla/Assertions.h"
 +#include "mozilla/dom/Document.h"
 +#include "mozilla/dom/Element.h"
-+#include "nsContentUtils.h"
 +#include "nsAtom.h"
++#include "nsContentUtils.h"
 +#include "nsIContent.h"
-+
 +#include "nsMenuContainer.h"
-+
-+#include "nsNativeMenuDocListener.h"
 +
 +using namespace mozilla;
 +
@@ -3898,9 +3891,9 @@
 +
 +#include "mozilla/RefPtr.h"
 +#include "mozilla/UniquePtr.h"
-+#include "nsTHashMap.h"
 +#include "nsStubMutationObserver.h"
 +#include "nsTArray.h"
++#include "nsTHashMap.h"
 +
 +class nsAtom;
 +class nsIContent;
@@ -4030,33 +4023,32 @@
 +#endif  // nsNativeMenuDocListener_h_
 --- /dev/null
 +++ b/widget/gtk/nsNativeMenuService.cpp
-@@ -0,0 +1,440 @@
+@@ -0,0 +1,439 @@
 +/* This Source Code Form is subject to the terms of the Mozilla Public
 + * License, v. 2.0. If a copy of the MPL was not distributed with this
 + * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 +
-+#include "mozilla/dom/Element.h"
-+#include "mozilla/Assertions.h"
-+#include "mozilla/Preferences.h"
-+#include "mozilla/UniquePtr.h"
-+#include "nsCOMPtr.h"
-+#include "nsCRT.h"
-+#include "nsGtkUtils.h"
-+#include "nsIContent.h"
-+#include "nsIWidget.h"
-+#include "nsServiceManagerUtils.h"
-+#include "nsWindow.h"
-+#include "prlink.h"
-+
-+#include "nsDbusmenu.h"
-+#include "nsMenuBar.h"
-+#include "nsNativeMenuDocListener.h"
++#include "nsNativeMenuService.h"
 +
 +#include <glib-object.h>
 +#include <pango/pango.h>
 +#include <stdlib.h>
 +
-+#include "nsNativeMenuService.h"
++#include "mozilla/Assertions.h"
++#include "mozilla/Preferences.h"
++#include "mozilla/UniquePtr.h"
++#include "mozilla/dom/Element.h"
++#include "nsCOMPtr.h"
++#include "nsCRT.h"
++#include "nsDbusmenu.h"
++#include "nsGtkUtils.h"
++#include "nsIContent.h"
++#include "nsIWidget.h"
++#include "nsMenuBar.h"
++#include "nsNativeMenuDocListener.h"
++#include "nsServiceManagerUtils.h"
++#include "nsWindow.h"
++#include "prlink.h"
 +
 +using namespace mozilla;
 +
@@ -4481,14 +4473,14 @@
 +#ifndef nsNativeMenuService_h_
 +#define nsNativeMenuService_h_
 +
-+#include "nsCOMPtr.h"
-+#include "nsTHashMap.h"
-+#include "nsINativeMenuService.h"
-+#include "nsTArray.h"
-+
 +#include <gdk/gdk.h>
 +#include <gio/gio.h>
 +#include <gtk/gtk.h>
++
++#include "nsCOMPtr.h"
++#include "nsINativeMenuService.h"
++#include "nsTArray.h"
++#include "nsTHashMap.h"
 +
 +class nsMenuBar;
 +
@@ -4554,7 +4546,7 @@
 +#endif  // nsNativeMenuService_h_
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -5417,6 +5417,10 @@
+@@ -5400,6 +5400,10 @@
    SetWindowDecoration(aShouldHide ? BorderStyle::None : mBorderStyle);
  }
  
@@ -4567,16 +4559,15 @@
    LOG("nsWindow::CheckForRollup() aAlwaysRollup %d", aAlwaysRollup);
 --- a/widget/gtk/nsWindow.h
 +++ b/widget/gtk/nsWindow.h
-@@ -27,6 +27,8 @@
+@@ -25,6 +25,7 @@
+ #include "mozilla/widget/WindowSurfaceProvider.h"
+ #include "nsIDragService.h"
  #include "nsIWidget.h"
++#include "nsMenuBar.h"
  #include "nsRefPtrHashtable.h"
  
-+#include "nsMenuBar.h"
-+
  #ifdef ACCESSIBILITY
- #  include "mozilla/a11y/LocalAccessible.h"
- #endif
-@@ -272,6 +274,8 @@
+@@ -273,6 +275,8 @@
    nsresult MakeFullScreen(bool aFullScreen) override;
    void HideWindowChrome(bool aShouldHide) override;
  
@@ -4585,7 +4576,7 @@
    /**
     * GetLastUserInputTime returns a timestamp for the most recent user input
     * event.  This is intended for pointer grab requests (including drags).
-@@ -854,6 +858,8 @@
+@@ -859,6 +863,8 @@
  
    static bool sTransparentMainWindow;
  
@@ -4616,7 +4607,7 @@
  
  # Static atom definitions, used to generate various files below.
  #
-@@ -2660,7 +2661,7 @@
+@@ -2665,7 +2666,7 @@
      Atom("PseudoStyle_MozSvgText", ":-moz-svg-text"),
      Atom("PseudoStyle_WebkitScrollbar", ":-webkit-scrollbar"),
      # END ATOMS
@@ -4644,15 +4635,15 @@
  if defined('NS_PRINTING'):
 --- a/widget/gtk/NativeMenuSupport.cpp
 +++ b/widget/gtk/NativeMenuSupport.cpp
-@@ -9,6 +9,8 @@
+@@ -8,6 +8,8 @@
+ #include "MainThreadUtils.h"
  #include "NativeMenuGtk.h"
  #include "mozilla/StaticPrefs_widget.h"
- #include "nsWindow.h"
 +#include "nsINativeMenuService.h"
 +#include "nsServiceManagerUtils.h"
+ #include "nsWindow.h"
  
  namespace mozilla::widget {
- 
 @@ -17,6 +19,14 @@
    MOZ_RELEASE_ASSERT(NS_IsMainThread(),
                       "Attempting to create native menu bar on wrong thread!");
