@@ -4630,9 +4630,9 @@
 +        'constructor': 'nsNativeMenuService::GetInstanceForServiceManager',
 +        'headers': ['/widget/gtk/nsNativeMenuService.h'],
 +    },
- ]
- 
- if defined('NS_PRINTING'):
+     {
+         'cid': '{d3f69889-e13a-4321-980c-a39332e21f34}',
+         'contract_ids': ['@mozilla.org/gfx/devicecontextspec;1'],
 --- a/widget/gtk/NativeMenuSupport.cpp
 +++ b/widget/gtk/NativeMenuSupport.cpp
 @@ -8,6 +8,8 @@
