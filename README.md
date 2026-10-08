@@ -9,11 +9,9 @@ This industry section will be updated and adapted as changes occur during the de
 
 **Other Projects:**
 - [firefox-esr-globalmenu](https://aur.archlinux.org/packages/firefox-esr-globalmenu)
-- [Waterfox project](https://github.com/MrAlex94/Waterfox/)
-- [Plasmafox Web-Browser](https://github.com/torvic9/plasmafox/)
+- [Waterfox project](https://github.com/BrowserWorks/waterfox)
 - [thunderbird-globalmenu](https://aur.archlinux.org/packages/thunderbird-globalmenu)
 - [firefox-globalmenu](https://aur.archlinux.org/packages/firefox-globalmenu)
-- [Betterbird](https://github.com/Betterbird)
   
 **Notes:**
 - Global menu on Unity seems to require `libdbusmenu-{qt5,gtk3}` and/or `appmenu-gtk-module` packages.
