@@ -8,7 +8,7 @@
 
 **Other Projects:**
 - [firefox-esr-globalmenu](https://aur.archlinux.org/packages/firefox-esr-globalmenu)
-- [Waterfox project](https://github.com/MrAlex94/Waterfox/)
+- [Waterfox project](https://github.com/BrowserWorks/waterfox)
 - [Plasmafox Web-Browser](https://github.com/torvic9/plasmafox/)
 - [thunderbird-globalmenu](https://aur.archlinux.org/packages/thunderbird-globalmenu)
 - [firefox-globalmenu](https://aur.archlinux.org/packages/firefox-globalmenu)
