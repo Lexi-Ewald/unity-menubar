@@ -36,7 +36,7 @@
  nsINode* XULPopupElement::GetTriggerNode() const {
 --- a/dom/xul/moz.build
 +++ b/dom/xul/moz.build
-@@ -89,4 +89,9 @@ LOCAL_INCLUDES += [
+@@ -89,6 +89,11 @@
  
  include("/ipc/chromium/chromium-config.mozbuild")
  
@@ -46,6 +46,8 @@
 +    ]
 +
  FINAL_LIBRARY = "xul"
+ 
+ SOURCE_HEADERS += [
 --- a/layout/build/moz.build
 +++ b/layout/build/moz.build
 @@ -65,6 +65,10 @@ elif CONFIG["MOZ_WIDGET_TOOLKIT"] == "an
