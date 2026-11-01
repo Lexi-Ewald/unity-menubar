@@ -3641,7 +3641,7 @@
 +  }
 +
 +  MutationRecord* m =
-+      mPendingMutations.AppendElement(MakeUnique<MutationRecord>())->get();
++      mPendingMutations.AppendElement(std::make_unique<MutationRecord>())->get();
 +  m->mType = MutationRecord::eAttributeChanged;
 +  m->mTarget = aElement;
 +  m->mAttribute = aAttribute;
@@ -3672,7 +3672,7 @@
 +  }
 +
 +  MutationRecord* m =
-+      mPendingMutations.AppendElement(MakeUnique<MutationRecord>())->get();
++      mPendingMutations.AppendElement(std::make_unique<MutationRecord>())->get();
 +  m->mType = MutationRecord::eContentInserted;
 +  m->mTarget = container;
 +  m->mChild = aChild;
@@ -3694,7 +3694,7 @@
 +  }
 +
 +  MutationRecord* m =
-+      mPendingMutations.AppendElement(MakeUnique<MutationRecord>())->get();
++      mPendingMutations.AppendElement(std::make_unique<MutationRecord>())->get();
 +  m->mType = MutationRecord::eContentRemoved;
 +  m->mTarget = container;
 +  m->mChild = aChild;
@@ -4700,7 +4700,7 @@
 +#endif  // mozilla_widget_NativeMenuSupport_h_
 --- a/widget/moz.build
 +++ b/widget/moz.build
-@@ -172,6 +172,11 @@ EXPORTS += [
+@@ -171,6 +171,11 @@ EXPORTS += [
      "PuppetWidget.h",
  ]
  
