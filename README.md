@@ -8,13 +8,11 @@
 
 **Other Projects:**
 - [firefox-esr-globalmenu](https://aur.archlinux.org/packages/firefox-esr-globalmenu)
-- [Waterfox project](https://github.com/BrowserWorks/waterfox)
 - [thunderbird-globalmenu](https://aur.archlinux.org/packages/thunderbird-globalmenu)
 - [firefox-globalmenu](https://aur.archlinux.org/packages/firefox-globalmenu)
   
 **Notes:**
 - Global menu on Unity seems to require `libdbusmenu-{qt5,gtk3}` and/or `appmenu-gtk-module` packages.
-- Unity-menubar.patch is tested for firefox version (>= 145.0*)
 - Ubuntu firefox-unity and thunderbird-unity global menu is built on [launchpad.net](https://launchpad.net/~darkgrave/+archive/ubuntu/ffunity)
   
 **Tip:**
